@@ -45,7 +45,7 @@
                     </div>
 
                     <div class="modal-footer border-0 justify-content-end pt-0">
-                        <a href="index.php" class="btn btn-warning text-white btn-sm">Log Out</a>
+                        <a href="../index.php" class="btn btn-warning text-white btn-sm">Log Out</a>
                         <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>

@@ -5,41 +5,81 @@
     <title>dashboard</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/x-icon" href="../noti.ico" />
 
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="../assets/css/layout.css">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/e7761c5b02.js" crossorigin="anonymous"></script>
+
+    <!-- css -->
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="../assets/css/style.css" />
+
 </head>
 
 <body>
 
     <div class="wrapper d-flex align-items-stretch">
+        <!-- sidebar -->
+
         <nav id="sidebar">
             <div class="p-4 pt-5">
-                <a href="#" class="img logo rounded-circle mb-5" style="background-image: url(../assets/images/logo.jpg);"></a>
+                <a href="#" class="img logo rounded-circle mb-5" style="background-image: url('/e-notice/uploads/user.jpg');"></a>
                 <ul class="list-unstyled components mb-5">
                     <li class="active">
-                        <a href="#">About</a>
+                        <a href="#">Dashboard</a>
                     </li>
                     <li>
-                        <a href="#">Portfolio</a>
+                        <a href="addNotice.php">Add Notice</a>
                     </li>
                     <li>
-                        <a href="#">Contact</a>
+                        <a href="view.php">View Notice</a>
+                    </li>
+                    <li>
+                        <a href="exam.php">Post Exam Notification</a>
+                    </li>
+                    <li>
+                        <a href="holiday.php">Announce Holiday</a>
+                    </li>
+                    <li>
+                        <a href="complaints.php">Complaints & Suggestions</a>
+                    </li>
+                    <li>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">Log out
+                        </a>
                     </li>
                 </ul>
-
                 <div class="footer">
-                    <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                        Copyright &copy;<script>
+                    <p>
+                        Copyright &copy;
+                        <script>
                             document.write(new Date().getFullYear());
-                        </script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib.com</a>
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+                        </script> |
+                        All rights reserved
+                    </p>
                 </div>
-
             </div>
         </nav>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header border-0 pb-0">
+                        <h6 class="modal-title" id="exampleModalLabel">Are you sure you want to <br>log out?</h6>
+                    </div>
+
+                    <div class="modal-footer border-0 justify-content-end pt-0">
+                        <a href="../index.php" class="btn btn-warning text-white btn-sm">Log Out</a>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Page Content  -->
         <div id="content" class="p-4 p-md-5">
@@ -58,26 +98,25 @@
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="nav navbar-nav ml-auto">
                             <li class="nav-item active">
-                                <a class="nav-link" href="#">Home</a>
+                                <a class="nav-link" href="#">Welcome, Admin</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">About</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Portfolio</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Contact</a>
-                            </li>
+
                         </ul>
                     </div>
                 </div>
             </nav>
 
-            <h2 class="mb-4">Sidebar #01</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-light">
+                    <li class="breadcrumb-item fs-3 fw-bold"><a href="dashboard.php">Home</a></li>
+                    <li class="breadcrumb-item fs-3 fw-bold active" aria-current="page">Library</li>
+                </ol>
+            </nav>
+
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
         </div>
+
     </div>
 
     <script src="../assets/js/jquery.min.js"></script>
@@ -85,5 +124,7 @@
     <script src="../assets/js/bootstrap.min.js"></script>
     <script src="../assets/js/main.js"></script>
 </body>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
 </html>

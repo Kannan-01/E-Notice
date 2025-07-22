@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>E-Notice</title>
-
+    <link rel="icon" type="image/x-icon" href="noti.ico" />
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,7 +19,9 @@
     <!-- Font Awesome -->
     <script src="https://kit.fontawesome.com/e7761c5b02.js" crossorigin="anonymous"></script>
 
+    <!-- css -->
     <link rel="stylesheet" href="./assets/css/style.css" />
+
 </head>
 
 <body>
@@ -142,9 +144,8 @@
 </body>
 
 </html>
-
 <?php
-include 'connection.php';
+include './db/connection.php';
 
 if (isset($_POST["login"])) {
 
@@ -167,19 +168,18 @@ if (isset($_POST["login"])) {
 
     if ($user = mysqli_fetch_assoc($result)) {
         if (password_verify($password, $user["password"])) {
-            // Successful login
+
             session_start();
             $_SESSION["user_id"] = $user["user_id"];
             $_SESSION["user_name"] = $user["name"];
             $_SESSION["role"] = $user["role"];
 
-            // Redirect based on role (optional)
-            // if ($user["role"] === "admin") {
-            //     header("Location: admin-dashboard.php");
-            // } else {
-            //     header("Location: dashboard.php");
-            // }
-            echo "<script>alert('Login successful!'); window.location.href='./user/home.php';</script>";
+            if ($user["role"] === "admin") {
+                echo "<script>alert('Login successful!'); window.location.href='./admin/dashboard.php';</script>";
+            } else {
+                echo "<script>alert('Login successful!'); window.location.href='./user/home.php';</script>";
+            }
+
             exit();
         } else {
             echo "<script>alert('Incorrect password');</script>";
@@ -234,7 +234,7 @@ if (isset($_POST["register"])) {
         $role = $_POST['role'];
 
         // Insert into users table
-        $ins = "INSERT INTO users (name, email, password,department, role) VALUES ('$name', '$email', '$hashedPassword','department','$role')";
+        $ins = "INSERT INTO users (name, email, password,department, role) VALUES ('$name', '$email', '$hashedPassword','$department','$role')";
         if (mysqli_query($conn, $ins)) {
             $_POST['fname'] = '';
             $_POST['lname'] = '';
