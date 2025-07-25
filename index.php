@@ -199,14 +199,6 @@ if (isset($_POST["register"])) {
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
     } else {
-        // Create database if not exists
-        $database = "CREATE DATABASE IF NOT EXISTS enotice";
-        if (!mysqli_query($conn, $database)) {
-            echo "Error creating database: " . mysqli_error($conn);
-        }
-
-        // Select database
-        mysqli_select_db($conn, "enotice");
 
         // Create users table
         $table = "CREATE TABLE IF NOT EXISTS users (

@@ -23,59 +23,14 @@
 <body>
     <div class="wrapper d-flex align-items-stretch">
         <!-- sidebar -->
-        <nav id="sidebar">
-            <div class="p-4 pt-5">
-                <a href="#" class="img logo rounded-circle mb-5" style="background-image: url('/e-notice/uploads/user.jpg');"></a>
-                <ul class="list-unstyled components mb-5">
-                    <li><a href="dashboard.php">Dashboard</a></li>
-                    <li class="active"><a href="#">Add Notice</a></li>
-                    <li><a href="view.php">View Notice</a></li>
-                    <li><a href="exam.php">Post Exam Notification</a></li>
-                    <li><a href="holiday.php">Announce Holiday</a></li>
-                    <li><a href="complaints.php">Complaints & Suggestions</a></li>
-                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">Log out</a></li>
-                </ul>
-                <div class="footer">
-                    <p>
-                        Copyright &copy;
-                        <script>document.write(new Date().getFullYear());</script> | All rights reserved
-                    </p>
-                </div>
-            </div>
-        </nav>
 
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-sm">
-                <div class="modal-content">
-                    <div class="modal-header border-0 pb-0">
-                        <h6 class="modal-title" id="exampleModalLabel">Are you sure you want to <br>log out?</h6>
-                    </div>
-                    <div class="modal-footer border-0 justify-content-end pt-0">
-                        <a href="../index.php" class="btn btn-warning text-white btn-sm">Log Out</a>
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <?php
+        $currentPage = 'addNotice';
+        require './common/sidebar.php' ?>
 
         <!-- Page Content -->
         <div id="content" class="p-4 p-md-5">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <div class="container-fluid">
-                    <button type="button" id="sidebarCollapse" class="btn btn-primary">
-                        <i class="fa fa-bars"></i>
-                        <span class="sr-only">Toggle Menu</span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="nav navbar-nav ml-auto">
-                            <li class="nav-item active">
-                                <a class="nav-link" href="#">Welcome, Admin</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+            <?php require './common/header.php' ?>
 
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb bg-light">
@@ -88,7 +43,7 @@
                 <div class="row">
                     <!-- Left column -->
                     <div class="col-lg-8 col-sm-12">
-                        <form action="add_notice.php" method="post" enctype="multipart/form-data">
+                        <form method="post" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-lg-12 col-sm-12">
                                     <div class="mb-3">
@@ -120,11 +75,20 @@
                             </div>
 
                             <div class="mb-3">
+                                <label for="target" class="form-label">Target Audience</label>
+                                <select class="form-select shadow-none" id="target" name="target" required>
+                                    <option value="Students" selected>Students</option>
+                                    <option value="Teachers">Teachers</option>
+                                </select>
+                            </div>
+
+
+                            <div class="mb-3">
                                 <label for="uploadImg" class="form-label">Upload Image (Optional)</label>
                                 <input type="file" class="form-control shadow-none" id="uploadImg" name="uploadImg" />
                             </div>
 
-                            <button type="submit" class="btn text-white form-control" style="background-color:#f8b739;">
+                            <button type="submit" class="btn text-white form-control" style="background-color:#f8b739;" name="publish">
                                 Post your notice
                             </button>
                         </form>
@@ -150,3 +114,59 @@
 </body>
 
 </html>
+<?php
+if (isset($_POST["publish"])) {
+    include '../db/connection.php';
+
+    // Create 'notices' table if it doesn't exist
+    $table = "CREATE TABLE IF NOT EXISTS notices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    description TEXT,
+    department VARCHAR(100),
+    target VARCHAR(50),  -- <== new field
+    image VARCHAR(255),
+    posted_at DATETIME
+)";
+
+    mysqli_query($conn, $table); // EXECUTE the table creation
+
+    // Collect form data directly (no sanitization as per your preference)
+    $title = $_POST['title'];
+    $description = $_POST['description'];
+    $department = $_POST['department'];
+    $target = $_POST['target'];
+
+
+
+    // Handle image upload
+    $imagePath = '';
+    if (isset($_FILES['uploadImg']) && $_FILES['uploadImg']['error'] === 0) {
+        $imageName = basename($_FILES['uploadImg']['name']);
+        $imagePath = "uploads/" . time() . "_" . $imageName;
+        $targetFile = "../" . $imagePath;
+
+        $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+
+        if (in_array($fileType, $allowedTypes)) {
+            if (!move_uploaded_file($_FILES['uploadImg']['tmp_name'], $targetFile)) {
+                $imagePath = ''; // Reset on failure
+            }
+        }
+    }
+
+    // Insert into database
+    $insert = "INSERT INTO notices (title, description, department, target, image, posted_at)
+           VALUES ('$title', '$description', '$department', '$target', '$imagePath', NOW())";
+
+
+    if (mysqli_query($conn, $insert)) {
+        echo "<script>alert('Notice added successfully!'); window.location.href = 'view.php';</script>";
+    } else {
+        echo "Error: " . mysqli_error($conn);
+    }
+
+    mysqli_close($conn);
+}
+?>
