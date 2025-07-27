@@ -4,7 +4,7 @@
                 <a href="#" class="img logo rounded-circle mb-5" style="background-image: url('/e-notice/uploads/user.jpg');"></a>
                 <ul class="list-unstyled components mb-5">
                     <li class="<?php echo ($currentPage == 'dashboard') ? 'active' : ''; ?>"><a href="dashboard.php">Dashboard</a></li>
-                    <li class="<?php echo ($currentPage == 'addNotice') ? 'active' : ''; ?>"><a href="addNotice.php">Add Notice</a></li>
+                    <li class="<?php echo ($currentPage == 'notice') ? 'active' : ''; ?>"><a href="notice.php">Add Notice</a></li>
                     <li class="<?php echo ($currentPage == 'view') ? 'active' : ''; ?>"><a href="view.php">View Notice</a></li>
                     <li class="<?php echo ($currentPage == 'exam') ? 'active' : ''; ?>"><a href="exam.php">Post Exam Notification</a></li>
                     <li class="<?php echo ($currentPage == 'holiday') ? 'active' : ''; ?>"><a href="holiday.php">Announce Holiday</a></li>

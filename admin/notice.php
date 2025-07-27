@@ -25,7 +25,7 @@
         <!-- sidebar -->
 
         <?php
-        $currentPage = 'addNotice';
+        $currentPage = 'notice';
         require './common/sidebar.php' ?>
 
         <!-- Page Content -->
