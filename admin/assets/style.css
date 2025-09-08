@@ -1,0 +1,101 @@
+body {
+  background: #f7f8fa;
+}
+
+.project-card {
+  min-height: 190px;
+  border: none;
+  position: relative;
+  box-shadow: 0 1px 8px rgba(64, 64, 64, 0.04);
+  transition: box-shadow 0.2s, transform 0.18s;
+  cursor: pointer;
+}
+
+.project-card:hover {
+  box-shadow: 0 8px 28px rgba(120, 120, 120, 0.14);
+  transform: translateY(-4px) scale(1.025);
+}
+
+.project-accent {
+  width: 6px;
+  height: 32px;
+  border-radius: 8px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.avatars-group {
+  display: flex;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  margin-left: -9px;
+  box-shadow: 0 1px 3px rgba(140, 140, 140, 0.1);
+}
+
+.avatar:first-child {
+  margin-left: 0;
+}
+
+/* forms and button  */
+.bg-white {
+  background: #fff;
+}
+
+.btn-approve {
+  background-color: #f8b739 !important;
+  color: #222 !important;
+  border-radius: 99px;
+  box-shadow: 0 4px 12px rgba(247, 183, 0, 0.15);
+  border: none;
+  transition: background 0.2s;
+}
+
+.btn-approve:hover,
+.btn-approve:focus {
+  background-color: #cfa205 !important;
+  color: #fff !important;
+}
+
+.form-control,
+.form-select {
+  border-radius: 8px !important;
+  border: 2px solid #eee !important;
+  font-size: 1rem !important;
+  transition: border-color 0.2s;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #f8b739 !important;
+  box-shadow: 0 0 8px rgba(247, 183, 0, 0.16) !important;
+  outline: none !important;
+}
+
+.list-group-item-action.active {
+  background-color: #fffbe0 !important;
+  color: #f8b739 !important;
+  border-color: #f8b739 !important;
+}
+
+.list-group-item-action i {
+  font-size: 1.2rem;
+  vertical-align: middle;
+}
+
+@media (max-width: 991px) {
+  .sidebar {
+    position: relative;
+    height: auto;
+    width: 100%;
+  }
+
+  .col-lg-9.py-5.px-4 {
+    padding: 2rem 1rem !important;
+  }
+}

@@ -26,9 +26,9 @@
             <?php require './common/header.php' ?>
 
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb bg-light">
-                    <li class="breadcrumb-item fs-3 fw-bold"><a href="dashboard.php">Home</a></li>
-                    <li class="breadcrumb-item fs-3 fw-bold active" aria-current="page">Publish Exam Notification</li>
+                <ol class="breadcrumb bg-light p-3">
+                    <li class="breadcrumb-item fs-5 fw-bold"><a href="dashboard.php">Home</a></li>
+                    <li class="breadcrumb-item fs-5 fw-bold active" aria-current="page">Publish Exam Notification</li>
                 </ol>
             </nav>
 

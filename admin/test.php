@@ -1,147 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>Admin Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <style>
-    body {
-      overflow-x: hidden;
-    }
-    .sidebar {
-      height: 100vh;
-      width: 250px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      background: #343a40;
-      color: white;
-      padding-top: 60px;
-    }
-    .sidebar a {
-      color: white;
-      padding: 15px;
-      display: block;
-      text-decoration: none;
-    }
-    .sidebar a:hover {
-      background-color: #495057;
-    }
-    .main-content {
-      margin-left: 250px;
-      padding: 20px;
-    }
-    .navbar {
-      margin-left: 250px;
-      background-color: #f8f9fa;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>E-Notice</title>
+    <link rel="icon" type="image/x-icon" href="../noti.ico" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./assets/admin.css">
+    <link rel="stylesheet" href="./assets/style.css">
+
 </head>
+
 <body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <?php
+            $currentPage = 'settings';
+            require './common/sidebar.php'
+            ?>
+            <!-- Main Panel -->
+            <div class="col-lg-9 py-5 px-4">
+                <div class="mx-auto" style="max-width: 900px;">
+                    <h3 class="fw-bold mb-4">Account Settings</h3>
+                    <div class="row g-4">
+                        <!-- Left Menu -->
+                        <div class="col-lg-4">
+                            <div class="list-group mb-4 shadow-sm" id="settings-tabs">
+                                <button type="button" class="list-group-item list-group-item-action d-flex align-items-center active" data-target="notice-tab">
+                                    <i class="bi bi-file-text me-2"></i> Notice
+                                </button>
+                                <button type="button" class="list-group-item list-group-item-action d-flex align-items-center" data-target="holiday-tab">
+                                    <i class="bi bi-calendar2-event me-2"></i> Holiday
+                                </button>
+                                <button type="button" class="list-group-item list-group-item-action d-flex align-items-center" data-target="exam-tab">
+                                    <i class="bi bi-clipboard-check me-2"></i> Exam
+                                </button>
+                                <button type="button" class="list-group-item list-group-item-action d-flex align-items-center" data-target="online-class-tab">
+                                    <i class="bi bi-laptop me-2"></i> Online class
+                                </button>
+                                <button type="button" class="list-group-item list-group-item-action d-flex align-items-center text-danger" id="logout-btn">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Log Out
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Tab Content -->
+                        <div class="col-lg-8">
 
-<!-- Sidebar -->
-<div class="sidebar">
-  <h4 class="text-center">Admin Panel</h4>
-  <a href="#">🏠 Dashboard</a>
-  <a href="#">📌 Add Notice</a>
-  <a href="#">🗂️ View Notices</a>
-  <a href="#">📝 Post Exam Notification</a>
-  <a href="#">📅 Announce Holiday</a>
-  <a href="#">💬 Complaints & Suggestions</a>
-  <a href="#">🚪 Logout</a>
-</div>
+                            <?php
+                            require 'profile.php'
+                            ?>
 
-<!-- Top Navbar -->
-<nav class="navbar navbar-expand navbar-light shadow-sm">
-  <div class="container-fluid">
-    <span class="navbar-brand mb-0 h1">E-Notice Board - Admin</span>
-    <div class="d-flex">
-      <span class="me-3 text-muted">Welcome, Admin</span>
-    </div>
-  </div>
-</nav>
+                            <?php
+                            require 'notification.php'
+                            ?>
 
-<!-- Main Content -->
-<div class="main-content">
-  <h2 class="mb-4">Dashboard</h2>
+                            <?php
+                            require 'password.php'
+                            ?>
 
-  <!-- Summary Cards -->
-  <div class="row mb-4">
-    <div class="col-md-3">
-      <div class="card text-white bg-primary mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Total Notices</h5>
-          <p class="card-text fs-4">12</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logout Modal -->
+                <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content rounded-4 shadow">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to log out?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <a href="../auth/logout.php" class="btn btn-danger">Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+                <script>
+                    // Tabs toggle logic
+                    document.querySelectorAll('#settings-tabs button').forEach(tab => {
+                        tab.addEventListener('click', function() {
+                            document.querySelectorAll('#settings-tabs .list-group-item').forEach(item => item.classList.remove('active'));
+                            this.classList.add('active');
+                            const target = this.getAttribute('data-target');
+                            document.querySelectorAll('.settings-section').forEach(sec => sec.style.display = 'none');
+                            document.getElementById(target).style.display = 'block';
+                        });
+                    });
+
+                    // Logout modal show
+                    document.getElementById('logout-btn').addEventListener('click', function() {
+                        new bootstrap.Modal(document.getElementById('logoutModal')).show();
+                    });
+                </script>
+            </div>
         </div>
-      </div>
     </div>
-    <div class="col-md-3">
-      <div class="card text-white bg-success mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Students</h5>
-          <p class="card-text fs-4">240</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card text-white bg-info mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Teachers</h5>
-          <p class="card-text fs-4">25</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card text-white bg-warning mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Feedback</h5>
-          <p class="card-text fs-4">8</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Recent Notices -->
-  <div class="card mb-4">
-    <div class="card-header bg-light">📌 Recent Notices</div>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item"><strong>Seminar on AI</strong> <span class="text-muted float-end">05 Jul 2025</span></li>
-      <li class="list-group-item"><strong>Lab Manual Submission</strong> <span class="text-muted float-end">03 Jul 2025</span></li>
-      <li class="list-group-item"><strong>Project Review</strong> <span class="text-muted float-end">30 Jun 2025</span></li>
-      <li class="list-group-item"><strong>Library Due</strong> <span class="text-muted float-end">29 Jun 2025</span></li>
-      <li class="list-group-item"><strong>Orientation Program</strong> <span class="text-muted float-end">27 Jun 2025</span></li>
-    </ul>
-  </div>
-
-  <!-- Upcoming Exams -->
-  <div class="card mb-4">
-    <div class="card-header bg-light">📝 Upcoming Exams</div>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item">Data Structures – <span class="text-muted float-end">10 Jul 2025</span></li>
-      <li class="list-group-item">DBMS – <span class="text-muted float-end">12 Jul 2025</span></li>
-      <li class="list-group-item">Operating Systems – <span class="text-muted float-end">14 Jul 2025</span></li>
-    </ul>
-  </div>
-
-  <!-- Latest Feedback -->
-  <div class="card mb-4">
-    <div class="card-header bg-light">💬 Latest Feedback</div>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item"><strong>Arjun</strong> - Complaint: "Labs are too short." <span class="text-muted float-end">05 Jul</span></li>
-      <li class="list-group-item"><strong>Meera</strong> - Suggestion: "Add previous year papers." <span class="text-muted float-end">04 Jul</span></li>
-      <li class="list-group-item"><strong>Ravi</strong> - Complaint: "Exam hall was too noisy." <span class="text-muted float-end">03 Jul</span></li>
-    </ul>
-  </div>
-
-  <!-- Quick Action Buttons -->
-  <div class="mt-4">
-    <a href="#" class="btn btn-primary me-2">➕ Add New Notice</a>
-    <a href="#" class="btn btn-info me-2">📅 Post Exam Notification</a>
-    <a href="#" class="btn btn-warning">📢 Announce Holiday</a>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

@@ -54,7 +54,8 @@
                                     <option value="Public">Public</option>
                                     <option value="Festival">Festival</option>
                                     <option value="Institutional">Institutional</option>
-                                    <option value="Emergency">Emergency</option>
+                                    <option value="Weather Related">Weather Related</option>
+                                    <option value="Administrative">Administrative</option>
                                     <option value="Other">Other</option>
                                 </select>
                             </div>
@@ -133,7 +134,6 @@
             if (toggle.checked) {
                 singleDayDiv.style.display = "none";
                 multiDayDiv.style.display = "flex";
-                // Make range fields required, remove required from single
                 document.getElementById("holiday_date").required = false;
                 document.getElementById("start_date").required = true;
                 document.getElementById("end_date").required = true;
@@ -149,30 +149,28 @@
 </body>
 
 </html>
+
 <?php
-include '../db/connection.php'; // Updated path to connection file
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+include '../db/connection.php';
+require '../phpmailer/src/PHPMailer.php';
+require '../phpmailer/src/SMTP.php';
+require '../phpmailer/src/Exception.php';
 
 if (isset($_POST["announce"])) {
-
-    // Get POST data
     $title = $_POST['title'];
     $type = $_POST['holiday_type'];
     $description = $_POST['description'];
     $department = $_POST['department'];
 
     $isMultiDay = !empty($_POST['start_date']) && !empty($_POST['end_date']);
+    $holiday_date = $isMultiDay ? "NULL" : $_POST['holiday_date'];
+    $start_date = $isMultiDay ? $_POST['start_date'] : "NULL";
+    $end_date = $isMultiDay ? $_POST['end_date'] : "NULL";
 
-    if ($isMultiDay) {
-        $holiday_date = "NULL";
-        $start_date = $_POST['start_date'];
-        $end_date = $_POST['end_date'];
-    } else {
-        $holiday_date = $_POST['holiday_date'];
-        $start_date = "NULL";
-        $end_date = "NULL";
-    }
-
-    // Create table if not exists
     $createTable = "CREATE TABLE IF NOT EXISTS holiday (
         id INT AUTO_INCREMENT PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
@@ -186,24 +184,68 @@ if (isset($_POST["announce"])) {
     )";
     mysqli_query($conn, $createTable);
 
-    // Insert query (no sanitization)
     $query = "INSERT INTO holiday (title, holiday_type, holiday_date, start_date, end_date, description, department)
-    VALUES (
-        '$title',
-        '$type',
-        " . ($holiday_date === "NULL" ? "NULL" : "'$holiday_date'") . ",
-        " . ($start_date === "NULL" ? "NULL" : "'$start_date'") . ",
-        " . ($end_date === "NULL" ? "NULL" : "'$end_date'") . ",
-        '$description',
-        '$department'
-    )";
+              VALUES (
+                  '$title',
+                  '$type',
+                  " . ($holiday_date === "NULL" ? "NULL" : "'$holiday_date'") . ",
+                  " . ($start_date === "NULL" ? "NULL" : "'$start_date'") . ",
+                  " . ($end_date === "NULL" ? "NULL" : "'$end_date'") . ",
+                  '$description',
+                  '$department'
+              )";
 
     if (mysqli_query($conn, $query)) {
-        echo "<script>alert('Holiday announced successfully.'); window.location.href='holiday.php';</script>";
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'enoticekmm@gmail.com';
+            $mail->Password = 'erhi bhlg qnkf lkbb';
+            $mail->SMTPSecure = 'tls';
+            $mail->Port = 587;
+
+            $mail->setFrom('enoticekmm@gmail.com', 'E-Notice Board');
+
+            $deptFilter = $department === 'All' ? "" : "WHERE department = '$department'";
+            $res = mysqli_query($conn, "SELECT email FROM users $deptFilter");
+
+            while ($row = mysqli_fetch_assoc($res)) {
+                $mail->addBCC($row['email']);
+            }
+
+            $mail->isHTML(true);
+            $mail->Subject = "Holiday Announcement: $title";
+
+            $mail->Body = "
+    <div style='font-family: Arial, sans-serif; padding: 20px; color: #333;'>
+        <div style='background-color: #f8b739; padding: 15px 25px; color: white; border-radius: 8px 8px 0 0;'>
+            <h2 style='margin: 0;'>📢 Holiday Announcement</h2>
+        </div>
+
+        <div style='border: 1px solid #f0f0f0; padding: 20px; background-color: #fff;'>
+            <p style='font-size: 16px;'><strong>📌 Title:</strong> $title</p>
+            <p style='font-size: 16px;'><strong>📁 Department:</strong> $department</p>
+            <p style='font-size: 16px;'><strong>📅 Type:</strong> $type</p>
+            <hr style='border: none; border-top: 1px solid #eee;' />
+            <p style='font-size: 16px;'>" . nl2br($description) . "</p>
+        </div>
+
+        <div style='text-align: center; font-size: 12px; margin-top: 20px; color: #999;'>
+            <p>This is an automated message from the E-Notice Board System. Please do not reply.</p>
+        </div>
+    </div>";
+
+
+            $mail->send();
+            echo "<script>alert('Holiday announced and email sent successfully.'); window.location.href='holiday.php';</script>";
+        } catch (Exception $e) {
+            echo "<script>alert('Mail Error: {$mail->ErrorInfo}');</script>";
+        }
     } else {
         echo "<script>alert('Error: " . mysqli_error($conn) . "'); history.back();</script>";
     }
-
     mysqli_close($conn);
 }
 ?>

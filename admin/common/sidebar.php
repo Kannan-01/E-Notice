@@ -1,38 +1,22 @@
-        <!-- sidebar -->
-        <nav id="sidebar">
-            <div class="p-4 pt-5">
-                <a href="#" class="img logo rounded-circle mb-5" style="background-image: url('/e-notice/uploads/user.jpg');"></a>
-                <ul class="list-unstyled components mb-5">
-                    <li class="<?php echo ($currentPage == 'dashboard') ? 'active' : ''; ?>"><a href="dashboard.php">Dashboard</a></li>
-                    <li class="<?php echo ($currentPage == 'notice') ? 'active' : ''; ?>"><a href="notice.php">Add Notice</a></li>
-                    <li class="<?php echo ($currentPage == 'view') ? 'active' : ''; ?>"><a href="view.php">View Notice</a></li>
-                    <li class="<?php echo ($currentPage == 'exam') ? 'active' : ''; ?>"><a href="exam.php">Post Exam Notification</a></li>
-                    <li class="<?php echo ($currentPage == 'holiday') ? 'active' : ''; ?>"><a href="holiday.php">Announce Holiday</a></li>
-                    <li class="<?php echo ($currentPage == 'complaints') ? 'active' : ''; ?>"><a href="complaints.php">Complaints & Suggestions</a></li>
-                    <li><a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">Log out</a></li>
-                </ul>
-                <div class="footer">
-                    <p>
-                        Copyright &copy;
-                        <script>
-                            document.write(new Date().getFullYear());
-                        </script> | All rights reserved
-                    </p>
+            <!-- Sidebar -->
+            <div class="col-lg-3 sidebar px-4 py-4">
+                <div class="brand-title mb-4">
+                    <span class="accent">E-Notice</span> Admin
+                </div>
+                <nav>
+                    <a href="dashboard.php" class="menu-link <?php echo ($currentPage == 'dashboard') ? 'active' : ''; ?>""><i class=" bi bi-layout-text-sidebar"></i> Dashboard</a>
+                    <a href="approval.php" class="menu-link <?php echo ($currentPage == 'approval') ? 'active' : ''; ?>"><i class="bi bi-person-badge me-2"></i> User Approval</a>
+                    <a href="#" class="menu-link <?php echo ($currentPage == 'notice') ? 'active' : ''; ?>"><i class="bi bi-envelope-open"></i> Notices</a>
+                    <a href="#" class="menu-link <?php echo ($currentPage == 'settings') ? 'active' : ''; ?>"><i class="bi bi-gear"></i> Settings</a>
+                </nav>
+                <div class="d-flex align-items-center p-3 mt-auto rounded-3 bg-light">
+                    <div class="flex-grow-1">
+                        <div class="small text-secondary">Signed in as</div>
+                        <div class="fw-semibold"><?= htmlspecialchars($_SESSION['user_name'] ?? 'User Name') ?></div>
+                    </div>
+                    <i class="bi bi-person-circle fs-4 text-secondary"></i>
+                </div>
+                <div class="mt-5 pt-4 border-top">
+                    <span class="menu-link"><i class="bi bi-question-circle"></i> Help Center</span>
                 </div>
             </div>
-        </nav>
-
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-sm">
-                <div class="modal-content">
-                    <div class="modal-header border-0 pb-0">
-                        <h6 class="modal-title" id="exampleModalLabel">Are you sure you want to <br>log out?</h6>
-                    </div>
-                    <div class="modal-footer border-0 justify-content-end pt-0">
-                        <a href="../index.php" class="btn btn-warning text-white btn-sm">Log Out</a>
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>

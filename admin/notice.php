@@ -41,7 +41,6 @@
 
             <div class="container mt-5 mb-5">
                 <div class="row">
-                    <!-- Left column -->
                     <div class="col-lg-8 col-sm-12">
                         <form method="post" enctype="multipart/form-data">
                             <div class="row">
@@ -63,6 +62,7 @@
                                 <label for="department" class="form-label">Department</label>
                                 <select class="form-select shadow-none" id="department" name="department" required>
                                     <option value="" disabled selected>Select your department</option>
+                                    <option value="All">All</option> <!-- New Option Added -->
                                     <option value="Commerce">Commerce</option>
                                     <option value="Computer Science">Computer Science</option>
                                     <option value="Fashion Design">Fashion Design</option>
@@ -73,6 +73,7 @@
                                     <option value="Social Work">Social Work</option>
                                 </select>
                             </div>
+
 
                             <div class="mb-3">
                                 <label for="target" class="form-label">Target Audience</label>
@@ -93,13 +94,6 @@
                             </button>
                         </form>
                     </div>
-
-                    <!-- Right column -->
-                    <!-- <div class="col-lg-4 col-sm-12 col-md-12 d-flex justify-content-center align-items-center">
-                        <label for="uploadImg" class="m-0">
-                            <img id="imgPreview" src="https://images.pexels.com/photos/28216688/pexels-photo-28216688.png" alt="Click to upload" width="250" class="rounded responsive" style="cursor:pointer; object-fit:cover;" />
-                        </label>
-                    </div> -->
                 </div>
             </div>
         </div>
@@ -114,32 +108,37 @@
 </body>
 
 </html>
+
 <?php
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+include '../db/connection.php';
+require '../phpmailer/src/PHPMailer.php';
+require '../phpmailer/src/SMTP.php';
+require '../phpmailer/src/Exception.php';
+
 if (isset($_POST["publish"])) {
-    include '../db/connection.php';
+    // 1. Create 'notices' table if it doesn't exist
+    $createTable = "CREATE TABLE IF NOT EXISTS notices (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255),
+        description TEXT,
+        department VARCHAR(100),
+        target VARCHAR(50),
+        image VARCHAR(255),
+        posted_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )";
+    mysqli_query($conn, $createTable);
 
-    // Create 'notices' table if it doesn't exist
-    $table = "CREATE TABLE IF NOT EXISTS notices (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255),
-    description TEXT,
-    department VARCHAR(100),
-    target VARCHAR(50),  -- <== new field
-    image VARCHAR(255),
-    posted_at DATETIME
-)";
-
-    mysqli_query($conn, $table); // EXECUTE the table creation
-
-    // Collect form data directly (no sanitization as per your preference)
+    // 2. Collect form data (no sanitization as requested)
     $title = $_POST['title'];
     $description = $_POST['description'];
     $department = $_POST['department'];
     $target = $_POST['target'];
 
-
-
-    // Handle image upload
+    // 3. Image Upload Handling
     $imagePath = '';
     if (isset($_FILES['uploadImg']) && $_FILES['uploadImg']['error'] === 0) {
         $imageName = basename($_FILES['uploadImg']['name']);
@@ -151,22 +150,77 @@ if (isset($_POST["publish"])) {
 
         if (in_array($fileType, $allowedTypes)) {
             if (!move_uploaded_file($_FILES['uploadImg']['tmp_name'], $targetFile)) {
-                $imagePath = ''; // Reset on failure
+                $imagePath = '';
             }
         }
     }
 
-    // Insert into database
+    // 4. Insert into DB
+    $currentDate = date('Y-m-d H:i:s');
     $insert = "INSERT INTO notices (title, description, department, target, image, posted_at)
-           VALUES ('$title', '$description', '$department', '$target', '$imagePath', NOW())";
+    VALUES ('$title', '$description', '$department', '$target', '$imagePath', '$currentDate')";
 
+    mysqli_query($conn, $insert);
 
-    if (mysqli_query($conn, $insert)) {
-        echo "<script>alert('Notice added successfully!'); window.location.href = 'view.php';</script>";
+    // 5. Fetch Emails based on department
+    $emails = [];
+    if ($department === "All") {
+        $result = mysqli_query($conn, "SELECT email FROM users");
     } else {
-        echo "Error: " . mysqli_error($conn);
+        $result = mysqli_query($conn, "SELECT email FROM users WHERE department = '$department'");
     }
 
-    mysqli_close($conn);
+    while ($row = mysqli_fetch_assoc($result)) {
+        $emails[] = $row['email'];
+    }
+
+    // 6. Send emails using PHPMailer
+    $mail = new PHPMailer(true);
+
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';          // Use your SMTP
+        $mail->SMTPAuth = true;
+        $mail->Username = 'enoticekmm@gmail.com';   // Your email
+        $mail->Password = 'erhi bhlg qnkf lkbb';      // Your email app password
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
+
+        $mail->setFrom('enoticekmm@gmail.com', 'E-Notice Board');
+
+        foreach ($emails as $email) {
+            $mail->addAddress($email);
+        }
+
+        $mail->isHTML(true);
+        $mail->Subject = 'New Notice: ' . $title;
+
+        $mail->Body = '
+    <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+        <div style="background-color: #f8b739; padding: 15px 25px; color: white; border-radius: 8px 8px 0 0;">
+            <h2 style="margin: 0;">📢 New Notice Published</h2>
+        </div>
+        <div style="border: 1px solid #f0f0f0; padding: 20px; background-color: #fff;">
+            <p style="font-size: 16px;"><strong>📌 Title:</strong> ' . $title . '</p>
+            <p style="font-size: 16px;"><strong>📁 Department:</strong> ' . $department . '</p>
+            <p style="font-size: 16px;"><strong>👥 Audience:</strong> ' . $target . '</p>
+            <hr style="border: none; border-top: 1px solid #eee;">
+            <p style="font-size: 16px;">' . nl2br($description) . '</p>
+            <br>
+        </div>
+        <div style="text-align: center; font-size: 12px; margin-top: 20px; color: #999;">
+            <p>This is an automated message from the E-Notice Board System. Please do not reply.</p>
+        </div>
+    </div>
+';
+
+
+        $mail->send();
+    } catch (Exception $e) {
+        echo "<script>alert('Notice added but email failed: {$mail->ErrorInfo}'); window.location.href = 'view.php';</script>";
+        exit;
+    }
+
+    echo "<script>alert('Notice added and emails sent successfully.'); window.location.href = 'view.php';</script>";
 }
 ?>

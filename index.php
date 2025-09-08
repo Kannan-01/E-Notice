@@ -3,241 +3,241 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>E-Notice</title>
-    <link rel="icon" type="image/x-icon" href="noti.ico" />
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&family=Lexend&family=Work+Sans&display=swap"
-        rel="stylesheet" />
-
-    <!-- Bootstrap -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>E-Notice - Landing Page</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+        body {
+            background: #f5f6fd;
+            margin: 0;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
 
-    <!-- Font Awesome -->
-    <script src="https://kit.fontawesome.com/e7761c5b02.js" crossorigin="anonymous"></script>
 
-    <!-- css -->
-    <link rel="stylesheet" href="./assets/css/style.css" />
+        .landing-container {
+            width: 100vw;
+            height: 100vh;
+            max-width: none;
+            margin: 0;
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            background: #fff;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 60px 80px;
+            box-sizing: border-box;
+        }
 
+        .landing-content {
+            flex: 1 1 440px;
+            min-width: 280px;
+        }
+
+        .brand-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f8b739;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 16px;
+            font-size: 1.08rem;
+        }
+
+        .nav-links a {
+            color: #888ab3;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color .2s;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            color: #f8b739;
+        }
+
+        .main-title {
+            font-size: 2.3rem;
+            font-weight: 700;
+            margin-top: 30px;
+            color: #202235;
+            line-height: 1.24;
+        }
+
+        .main-title .accent {
+            color: #f8b739;
+        }
+
+        .main-desc {
+            font-size: 1.16rem;
+            color: #657089;
+            margin-top: 18px;
+            margin-bottom: 33px;
+            max-width: 420px;
+        }
+
+        .landing-actions {
+            display: flex;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .btn-landing {
+            font-size: 1rem;
+            border-radius: 14px;
+            padding: 11px 30px;
+            font-weight: 600;
+            border: none;
+            box-shadow: 0 3px 13px rgba(248, 183, 57, 0.14);
+            transition: background .2s, color .2s;
+        }
+
+        .btn-primary-landing {
+            background: #f8b739;
+            color: #222;
+        }
+
+        .btn-primary-landing:hover {
+            background: #cfa205;
+            color: white;
+        }
+
+        .btn-secondary-landing {
+            background: #fff;
+            border: 2px solid #f8b739;
+            color: #f8b739;
+        }
+
+        .btn-secondary-landing:hover {
+            background: #f8b739;
+            color: white;
+        }
+
+        .landing-illustration {
+            flex: 1 1 340px;
+            min-width: 260px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .illus-bg {
+            position: absolute;
+            top: 38px;
+            left: 25px;
+            width: 260px;
+            height: 260px;
+            z-index: 0;
+            background: linear-gradient(135deg, #f8b739 62%, #a077f7 95%);
+            border-radius: 34% 66% 53% 47% / 46% 37% 63% 54%;
+            opacity: 0.14;
+        }
+
+        .illus-img {
+            width: 260px;
+            z-index: 1;
+            border-radius: 14px;
+            background: #fff4d1;
+            box-shadow: 0 6px 30px rgba(248, 183, 57, 0.10);
+        }
+
+        .login-links {
+            position: absolute;
+            top: 28px;
+            right: 38px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-login,
+        .btn-signup {
+            border-radius: 10px;
+            padding: 7px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            border: none;
+            background: #fafaff;
+            color: #f8b739;
+            box-shadow: 0 2px 7px rgba(248, 183, 57, 0.16);
+            transition: background .2s;
+        }
+
+        .btn-login:hover,
+        .btn-signup:hover {
+            background: #f8b739;
+            color: #fff;
+        }
+
+        @media (max-width: 900px) {
+            .landing-container {
+                flex-wrap: wrap;
+                padding: 40px 30px;
+                height: auto;
+                min-height: 100vh;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .landing-container {
+                min-height: unset;
+                padding: 15px 5px;
+            }
+
+            .landing-content {
+                min-width: 180px;
+            }
+
+            .illus-img,
+            .illus-bg {
+                width: 160px;
+                height: 160px;
+            }
+
+            .main-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Login Container -->
-    <div class="container d-flex justify-content-center align-items-center min-vh-100">
-        <div class="w-100" style="max-width: 400px;">
-            <h1 style="font-size: 22px" class="text-center mb-4">
-                <span class="text-dark fw-bolder">Welcome to </span>
-                <span class="fw-bolder text-warning">E-Notice</span>
-            </h1>
-            <form method="post">
-                <div class="form-floating mb-3">
-                    <input type="email" class="form-control shadow-none" placeholder="Email address" name="emailInput" />
-                    <label for="emailInput">Email address</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="password" class="form-control shadow-none" placeholder="Password" name="passwordInput" />
-                    <label for="passwordInput">Password</label>
-                </div>
-                <div class="d-grid">
-                    <button class="btn rounded text-white" style="background-color:#f8b739;" type="submit" name="login" value="login">
-                        Login
-                    </button>
-                </div>
-                <div class="text-center mt-4">
-                    <p>
-                        New user?
-                        <a style="cursor: pointer" class="text-decoration-none text-warning" data-bs-toggle="modal" data-bs-target="#registerModal">Register here</a>
-                    </p>
-                </div>
-            </form>
+    <div class="landing-container">
+        <div class="landing-content">
+            <div class="brand-title">E<span style="color:#202235;">-Notice</span></div>
+            <div class="nav-links">
+                <a href="#" class="active">Home</a>
+                <a href="#">About</a>
+                <a href="#">Category</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="main-title">
+                Free <span class="accent">Notices</span> <br>
+                For Every Bright Student & Teacher
+            </div>
+            <div class="main-desc">
+                Get updates for every important event, alert, or opportunity. Instantly deliver notices to every student or teacher, making communication seamless in your educational institution.
+            </div>
+            <div class="landing-actions">
+                <button class="btn-landing btn-primary-landing">Submit Notice</button>
+                <button class="btn-landing btn-secondary-landing">View Notices</button>
+            </div>
         </div>
-    </div>
-
-    <!-- Register Modal -->
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h6 class="text-center">Sign Up</h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <h1 style="font-size: 22px">
-                        <span class="text-dark">Welcome to </span>
-                        <span class="fw-bolder text-warning">E-Notice</span>
-                    </h1>
-                    <form method="post">
-                        <!-- First name -->
-                        <div class="form-floating">
-                            <input type="text" class="form-control shadow-none" name="fname" placeholder="First name" required />
-                            <label>First name</label>
-                        </div>
-
-                        <!-- Last name -->
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control shadow-none" name="lname" placeholder="Last name" required />
-                            <label>Last name</label>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="form-floating mb-3">
-                            <input type="email" class="form-control shadow-none" name="email" placeholder="Email address" required />
-                            <label>Email address</label>
-                        </div>
-
-                        <!-- Password -->
-                        <div class="form-floating mb-3">
-                            <input type="password" class="form-control shadow-none" name="password" placeholder="Password" required />
-                            <label>Password</label>
-                        </div>
-
-                        <!-- Department -->
-                        <div class="form-floating mb-3">
-                            <select class="form-select shadow-none" id="department" name="department" required>
-                                <option value="" disabled selected>Select your department</option>
-                                <option value="Commerce">Commerce</option>
-                                <option value="Computer Science">Computer Science</option>
-                                <option value="Fashion Design">Fashion Design</option>
-                                <option value="Business Administration">Business Administration</option>
-                                <option value="Psychology">Psychology</option>
-                                <option value="Mathematics">Mathematics</option>
-                                <option value="English">English</option>
-                                <option value="Social Work">Social Work</option>
-                            </select>
-                            <label for="department">Select Department</label>
-                        </div>
-
-
-                        <!-- Role -->
-                        <div class="form-floating mb-4">
-                            <select class="form-select shadow-none" id="role" name="role" required>
-                                <option value="" disabled selected>Select your role</option>
-                                <option value="student">Student</option>
-                                <option value="teacher">Teacher</option>
-                            </select>
-                            <label for="role">Select Role</label>
-                        </div>
-
-                        <!-- Submit -->
-                        <div class="d-grid">
-                            <button class="btn rounded text-white" style="background-color:#f8b739;" type="submit" name="register" value="register">
-                                Sign up
-                            </button>
-                        </div>
-                        <div class="text-center mt-4">
-                            <p>
-                                Already registered?
-                                <a style="color: #f8b739; cursor: pointer" class="text-decoration-none" data-bs-dismiss="modal">Login</a>
-                            </p>
-                        </div>
-                    </form>
-                </div>
+        <div class="landing-illustration">
+            <div class="illus-bg"></div>
+            <!-- Use your own SVG or PNG for illustration; below is a sample SVG avatar for placeholder -->
+            <img src="child.png" class="illus-img" alt="Landing Illustration">
+            <div class="login-links">
+                <button class="btn-login">Login</button>
+                <button class="btn-signup">Sign Up</button>
             </div>
         </div>
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 </body>
 
 </html>
-<?php
-include './db/connection.php';
-
-if (isset($_POST["login"])) {
-
-    if (!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
-    }
-
-    // Select database
-    mysqli_select_db($conn, "enotice");
-
-    $email = $_POST["emailInput"];
-    $password = $_POST["passwordInput"];
-
-    // Check if user exists
-    $query = "SELECT * FROM users WHERE email = ?";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "s", $email);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-
-    if ($user = mysqli_fetch_assoc($result)) {
-        if (password_verify($password, $user["password"])) {
-
-            session_start();
-            $_SESSION["user_id"] = $user["user_id"];
-            $_SESSION["user_name"] = $user["name"];
-            $_SESSION["role"] = $user["role"];
-
-            if ($user["role"] === "admin") {
-                echo "<script>alert('Login successful!'); window.location.href='./admin/dashboard.php';</script>";
-            } else {
-                echo "<script>alert('Login successful!'); window.location.href='./user/home.php';</script>";
-            }
-
-            exit();
-        } else {
-            echo "<script>alert('Incorrect password');</script>";
-        }
-    } else {
-        echo "<script>alert('User not found');</script>";
-    }
-
-    mysqli_close($conn);
-}
-
-
-// login
-
-// register
-if (isset($_POST["register"])) {
-    if (!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
-    } else {
-
-        // Create users table
-        $table = "CREATE TABLE IF NOT EXISTS users (
-            user_id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(100),
-            email VARCHAR(100) UNIQUE,
-            password VARCHAR(255),
-            department VARCHAR(100),
-            role ENUM('admin','student','teacher') DEFAULT 'student',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )";
-
-        if (!mysqli_query($conn, $table)) {
-            echo "Error creating table: " . mysqli_error($conn);
-        }
-
-        // Collect data
-        $fname = $_POST['fname'];
-        $lname = $_POST['lname'];
-        $name = $fname . ' ' . $lname;
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $department = $_POST['department'];
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $role = $_POST['role'];
-
-        // Insert into users table
-        $ins = "INSERT INTO users (name, email, password,department, role) VALUES ('$name', '$email', '$hashedPassword','$department','$role')";
-        if (mysqli_query($conn, $ins)) {
-            $_POST['fname'] = '';
-            $_POST['lname'] = '';
-            $_POST['email'] = '';
-            $_POST['password'] = '';
-            $_POST['role'] = '';
-        } else {
-            echo mysqli_error($conn);
-        }
-
-        mysqli_close($conn);
-    }
-}
-?>
