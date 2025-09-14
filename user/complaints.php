@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS complaints (
     description TEXT NOT NULL,
     category VARCHAR(100) NOT NULL,
     department VARCHAR(100) NOT NULL,
-    status ENUM('Pending','In Progress','Resolved','Rejected') DEFAULT 'Pending',
+    status ENUM('Pending','Resolved') DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 )";

@@ -75,7 +75,7 @@ $noticesResult = mysqli_query($conn, $noticesSql);
                 <!-- Container & Header -->
                 <div class="container py-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="fw-bold">General Notices</h2>
+                        <h2 class="fw-bold"><span class="text-warning">General</span> Announcements</h2>
                         <div class="text-muted" style="font-size: 1rem;">
                             Sort By <b>Recent Project <i class="bi bi-chevron-down"></i></b>
                         </div>

@@ -92,10 +92,13 @@ if (!isset($_SESSION['user_id'])) {
             <!-- Main Panel -->
             <div class="col-lg-9 py-5 px-4">
                 <div class="container py-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="fw-bold"><span class="text-warning">Exam</span> Announcements</h2>
+                    </div>
                     <div class="row bg-white shadow-sm rounded-4" style="min-height: 480px;">
                         <!-- Calendar Left -->
                         <div class="col-md-7 border-end p-4">
-                            <h5 class="mb-3">Select Date</h5>
+                            <h5 class="mb-3 fw-bold">Select Date</h5>
                             <div class="d-flex align-items-center mb-3">
                                 <button class="btn btn-outline-none btn-sm me-2" onclick="changeMonth(-1)" type="button">
                                     <i class="bi bi-chevron-left text-dark"></i>
@@ -111,9 +114,9 @@ if (!isset($_SESSION['user_id'])) {
 
                         <!-- Details Right -->
                         <div class="col-md-5 p-4" id="examDetailsPane">
-                            <h4 class="fw-bold mb-3" id="examTitle">Select an exam date</h4>
+                            <h4 class="fw-bold mb-3" id="examTitle">Select an <span class="text-warning">exam date</span></h4>
                             <div id="examDetailContent" class="text-secondary fs-6">
-                                <p>Click a highlighted date on the calendar to view exam details here.</p>
+                                <p>Click a <span class="text-warning">highlighted</span> date on the calendar to view exam details here.</p>
                             </div>
                         </div>
                     </div>
@@ -188,15 +191,17 @@ if (!isset($_SESSION['user_id'])) {
 
                         exams.forEach(exam => {
                             examDetailContent.innerHTML += `
-            <div class="mb-3 p-2 border-bottom">
-                <div><strong>Title:</strong> ${exam.title}</div>
-                <div><strong>Type:</strong> ${exam.type}</div>
-                <div><strong>Department:</strong> ${exam.department}</div>
-                <div><strong>Subject:</strong> ${exam.subject}</div>
-                <div><strong>Session:</strong> ${exam.session}</div>
-                <div><strong>Location:</strong> ${exam.location}</div>
-            </div>
-        `;
+    <div style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 16px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); background-color: #fff;">
+        <h5 style="color: #f0ad4e; font-weight: 700; margin-bottom: 12px;">
+            ${exam.title}
+        </h5>
+        <div style="margin-bottom: 6px;"><strong>Type:</strong> ${exam.type}</div>
+        <div style="margin-bottom: 6px;"><strong>Department:</strong> ${exam.department}</div>
+        <div style="margin-bottom: 6px;"><strong>Subject:</strong> ${exam.subject}</div>
+        <div style="margin-bottom: 6px;"><strong>Session:</strong> ${exam.session}</div>
+        <div><strong>Room No:</strong> ${exam.location}</div>
+    </div>
+`;
                         });
                     }
 

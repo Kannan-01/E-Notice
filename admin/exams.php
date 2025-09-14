@@ -1,6 +1,6 @@
 <div id="exam-tab" class="settings-section" style="display:none;">
   <form id="examForm" method="post" enctype="multipart/form-data" class="bg-white p-4 rounded-4 shadow-sm" style="position:relative;">
-    <h5 class="fw-bold mb-4">Announce Exam</h5>
+    <h5 class="fw-bold mb-4">Announce <span class="text-warning">Exam</span></h5>
     <div class="row g-4 justify-content-between">
       <div class="col-md-12">
         <!-- Exam Title -->
@@ -58,8 +58,8 @@
               <label class="form-label">Session</label>
               <select class="form-select" name="subject_session[]" required>
                 <option value="" disabled selected>Select session</option>
-                <option value="FN">Forenoon (9:30 AM - 12:30 PM)</option>
-                <option value="AN">Afternoon (2:00 PM - 5:00 PM)</option>
+                <option value="9:00 AM - 12:00 PM">Forenoon (9:00 AM - 12:00 PM)</option>
+                <option value="1:00 PM - 4:00 PM">Afternoon (1:00 PM - 4:00 PM)</option>
               </select>
             </div>
             <div class="col-md-2 d-flex">

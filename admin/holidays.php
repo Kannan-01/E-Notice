@@ -1,6 +1,6 @@
 <div id="holiday-tab" class="settings-section" style="display:none;">
   <form id="holidayForm" method="POST" class="bg-white p-4 rounded-4 shadow-sm" style="position:relative;" onsubmit="return validateHolidayForm();">
-    <h5 class="fw-bold mb-4">Announce A Holiday</h5>
+    <h5 class="fw-bold mb-4">Announce A <span class="text-warning">Holiday</span></h5>
     <div class="row g-4 justify-content-between">
       <div class="col-md-12">
         <!-- Holiday Title -->

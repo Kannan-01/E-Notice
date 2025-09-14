@@ -4,13 +4,13 @@
                     <span class="accent">E-Notice</span> User
                 </div>
                 <nav>
-                    <a href="notice.php" class="menu-link <?php echo ($currentPage == 'notice') ? 'active' : ''; ?>"><i class="bi bi-envelope-open"></i> Notices</a>
+                    <a href="notice.php" class="menu-link <?php echo ($currentPage == 'notice') ? 'active' : ''; ?>"><i class="bi bi-envelope-open me-2"></i> Notices</a>
                     <a href="holiday.php" class="menu-link <?php echo ($currentPage == 'holiday') ? 'active' : ''; ?>">
-                        <i class="bi bi-calendar-event"></i> Holidays
+                        <i class="bi bi-calendar-event me-2"></i> Holidays
                     </a>
-                    <a href="exam.php" class="menu-link <?php echo ($currentPage == 'exam') ? 'active' : ''; ?>"> <i class="bi bi-journal-text"></i> Exams </a>
-                    <a href="complaints.php" class="menu-link <?php echo ($currentPage == 'feedback') ? 'active' : ''; ?>"><i class="bi bi-chat-dots"></i> Complaints </a>
-                    <a href="settings.php" class="menu-link <?php echo ($currentPage == 'settings') ? 'active' : ''; ?>"><i class="bi bi-gear"></i> Settings</a>
+                    <a href="exam.php" class="menu-link <?php echo ($currentPage == 'exam') ? 'active' : ''; ?>"> <i class="bi bi-journal-text me-2"></i> Exams </a>
+                    <a href="complaints.php" class="menu-link <?php echo ($currentPage == 'feedback') ? 'active' : ''; ?>"><i class="bi bi-chat-dots me-2"></i> Complaints </a>
+                    <a href="settings.php" class="menu-link <?php echo ($currentPage == 'settings') ? 'active' : ''; ?>"><i class="bi bi-gear me-2"></i> Settings</a>
                 </nav>
                 <div class="d-flex align-items-center p-3 mt-auto rounded-3 bg-light">
                     <div class="flex-grow-1">

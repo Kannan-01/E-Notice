@@ -138,7 +138,8 @@ $conn->close();
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Admin Approvals E-Notice</title>
+    <title>E-Notice</title>
+    <link rel="icon" type="image/x-icon" href="../noti.ico" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" href="./assets/css/style.css">
@@ -155,7 +156,7 @@ $conn->close();
             <!-- Main Panel -->
             <div class="col-lg-9 py-5 px-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3 class="fw-bold text-dark">User Approvals</h3>
+                    <h3 class="fw-bold text-dark">User <span class="text-warning">Approvals</span></h3>
                     <div>
                         <!-- <button class="btn btn-outline-dark shadow-none"><i class="bi bi-search"></i></button> -->
                     </div>

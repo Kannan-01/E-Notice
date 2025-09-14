@@ -1,6 +1,6 @@
 <div id="notice-tab" class="settings-section" style="display:block;">
   <form id="noticeForm" method="POST" class="bg-white p-4 rounded-4 shadow-sm" style="position:relative;" onsubmit="return validateNoticeForm();">
-    <h5 class="fw-bold mb-4">Add A Notice</h5>
+    <h5 class="fw-bold mb-4">Add A <span class="text-warning" >Notice</span></h5>
     <div class="row g-4 justify-content-between">
       <div class="col-md-12">
         <div class="mb-3">
@@ -17,6 +17,7 @@
           <label for="department" class="form-label">Department</label>
           <select class="form-select" id="department" name="department" required>
             <option value="" disabled selected>Select department</option>
+             <option value="All">All</option>
             <option value="Commerce">Commerce</option>
             <option value="Computer Science">Computer Science</option>
             <option value="Fashion Design">Fashion Design</option>

@@ -8,13 +8,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// Check if user is admin
-if (!isset($_SESSION['role']) || strtolower($_SESSION['role']) !== 'admin') {
-    // Redirect non-admins to user dashboard (or logout)
-    header("Location: ../user/dashboard.php");
-    exit();
-}
-
 // Total users excluding admins
 $sqlTotalUsers = "SELECT COUNT(*) as total FROM users WHERE role != 'admin'";
 $result = $conn->query($sqlTotalUsers);
@@ -25,10 +18,11 @@ $sqlPending = "SELECT COUNT(*) as pending FROM users WHERE status = 'pending' AN
 $result = $conn->query($sqlPending);
 $pendingApprovals = $result->fetch_assoc()['pending'] ?? 0;
 
-// Notices published
-$sqlNotices = "SELECT COUNT(*) as total_notices FROM notices";
-$result = $conn->query($sqlNotices);
-$totalNotices = $result->fetch_assoc()['total_notices'] ?? 0;
+// pending complaints
+$sqlComplaints = "SELECT COUNT(*) as pending_complaints FROM complaints WHERE status = 'pending'";
+$result = $conn->query($sqlComplaints);
+$pendingComplaints = $result->fetch_assoc()['pending_complaints'] ?? 0;
+
 
 // Recent user activities
 $sqlActivities = "SELECT name, status, updated_at FROM users 
@@ -52,7 +46,8 @@ $conn->close();
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Admin Approvals E-Notice</title>
+     <title>E-Notice</title>
+    <link rel="icon" type="image/x-icon" href="../noti.ico" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" href="./assets/css/style.css">
@@ -69,10 +64,10 @@ $conn->close();
             <!-- Main Panel -->
             <div class="col-lg-9 py-5 px-4">
                 <div class="container-fluid">
-                    <h2 class="fw-bold mb-4">
+                    <h3 class="fw-bold mb-4">
                         <span class="text-dark">Dashboard</span>
                         <span class="accent">Overview</span>
-                    </h2>
+                    </h3>
 
                     <div class="row g-4 mb-5">
                         <div class="col-md-4">
@@ -91,9 +86,9 @@ $conn->close();
                         </div>
                         <div class="col-md-4">
                             <div class="card dashCard shadow-sm border-0 rounded-4 p-4">
-                                <h5 class="text-muted">Notices Published</h5>
-                                <h2 class="accent fw-bold"><?= $totalNotices ?></h2>
-                                <p class="text-success">+5 new this week</p>
+                                <h5 class="text-muted">Complaints Received</h5>
+                                <h2 class="accent fw-bold"><?= $pendingComplaints ?></h2>
+                                <p class="text-danger">Pending complaints</p>
                             </div>
                         </div>
                     </div>

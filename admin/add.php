@@ -86,9 +86,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['announce'])) {
     $department  = $_POST['department'] ?? 'All';
     $target      = $_POST['target'] ?? 'all';
 
-    $holiday_date = !empty($_POST['holiday_date']) ? "'".$_POST['holiday_date']."'" : "NULL";
-    $start_date   = !empty($_POST['start_date']) ? "'".$_POST['start_date']."'" : "NULL";
-    $end_date     = !empty($_POST['end_date']) ? "'".$_POST['end_date']."'" : "NULL";
+    $holiday_date = !empty($_POST['holiday_date']) ? "'" . $_POST['holiday_date'] . "'" : "NULL";
+    $start_date   = !empty($_POST['start_date']) ? "'" . $_POST['start_date'] . "'" : "NULL";
+    $end_date     = !empty($_POST['end_date']) ? "'" . $_POST['end_date'] . "'" : "NULL";
 
     $sql = "
       INSERT INTO holidays (title, description, holiday_date, start_date, end_date, department, target, status) 
@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS subjects (
     exam_id INT,
     subject_name VARCHAR(255),
     exam_date DATE,
-    session VARCHAR(10),
+    session VARCHAR(50),
     status ENUM('active','inactive') NOT NULL DEFAULT 'active',
     FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -223,6 +223,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['announce_exam'])) {
                                 <button type="button" class="list-group-item list-group-item-action d-flex align-items-center" data-target="exam-tab">
                                     <i class="bi bi-clipboard-check me-2"></i> Exam
                                 </button>
+                                <button type="button" class="list-group-item list-group-item-action d-flex align-items-center" data-target="events-tab">
+                                    <i class="bi bi-broadcast me-2"></i> Events
+                                </button>
                             </div>
                         </div>
                         <!-- Tab Content -->
@@ -238,6 +241,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['announce_exam'])) {
 
                             <?php
                             require 'exams.php'
+                            ?>
+
+                            <?php
+                            require 'events.php'
                             ?>
 
                         </div>
