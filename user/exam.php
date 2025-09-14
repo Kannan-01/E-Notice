@@ -1,10 +1,14 @@
 <?php
 session_start();
+include '../db/connection.php';
+
+// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
     exit();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,7 +19,7 @@ if (!isset($_SESSION['user_id'])) {
     <link rel="icon" type="image/x-icon" href="../noti.ico" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../admin/assets/admin.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
     <style>
         body {
             background: #f7f8fa;
@@ -121,22 +125,14 @@ if (!isset($_SESSION['user_id'])) {
                     const examTitle = document.getElementById('examTitle');
                     const examDetailContent = document.getElementById('examDetailContent');
 
-                    const examData = {
-                        '2025-09-11': {
-                            title: "Midterm - Mathematics",
-                            agenda: "Algebra, Calculus, Probability",
-                            duration: "2 hrs",
-                            session: "10:00 AM - 12:00 PM",
-                            location: "Room 204, Main Block"
-                        },
-                        '2025-09-13': {
-                            title: "English Literature Exam",
-                            agenda: "Modern Poetry, Drama",
-                            duration: "1.5 hrs",
-                            session: "9:00 AM - 10:30 AM",
-                            location: "Room 110"
-                        }
-                    };
+                    let examData = {};
+
+                    fetch("./fetchExams.php")
+                        .then(res => res.json())
+                        .then(data => {
+                            examData = data;
+                            renderCalendar(viewMonth, viewYear);
+                        });
 
                     let today = new Date();
                     let viewMonth = today.getMonth();
@@ -180,20 +176,30 @@ if (!isset($_SESSION['user_id'])) {
                     }
 
                     function showExamDetail(dateStr) {
-                        const exam = examData[dateStr];
-                        if (!exam) {
+                        const exams = examData[dateStr];
+                        if (!exams || exams.length === 0) {
                             examTitle.textContent = "No Exams";
                             examDetailContent.innerHTML = "<p>No exams scheduled for this date.</p>";
                             return;
                         }
-                        examTitle.textContent = exam.title;
-                        examDetailContent.innerHTML = `
-        <div><strong>Agenda:</strong> ${exam.agenda}</div>
-        <div><strong>Duration:</strong> ${exam.duration}</div>
-        <div><strong>Session:</strong> ${exam.session}</div>
-        <div><strong>Location:</strong> ${exam.location}</div>
-      `;
+
+                        examTitle.textContent = "Exam Details";
+                        examDetailContent.innerHTML = "";
+
+                        exams.forEach(exam => {
+                            examDetailContent.innerHTML += `
+            <div class="mb-3 p-2 border-bottom">
+                <div><strong>Title:</strong> ${exam.title}</div>
+                <div><strong>Type:</strong> ${exam.type}</div>
+                <div><strong>Department:</strong> ${exam.department}</div>
+                <div><strong>Subject:</strong> ${exam.subject}</div>
+                <div><strong>Session:</strong> ${exam.session}</div>
+                <div><strong>Location:</strong> ${exam.location}</div>
+            </div>
+        `;
+                        });
                     }
+
 
                     function getISODate(date) {
                         return date.toISOString().split('T')[0];

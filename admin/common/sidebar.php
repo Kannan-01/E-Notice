@@ -4,10 +4,17 @@
                     <span class="accent">E-Notice</span> Admin
                 </div>
                 <nav>
-                    <a href="dashboard.php" class="menu-link <?php echo ($currentPage == 'dashboard') ? 'active' : ''; ?>""><i class=" bi bi-layout-text-sidebar"></i> Dashboard</a>
-                    <a href="approval.php" class="menu-link <?php echo ($currentPage == 'approval') ? 'active' : ''; ?>"><i class="bi bi-person-badge me-2"></i> User Approval</a>
-                    <a href="#" class="menu-link <?php echo ($currentPage == 'notice') ? 'active' : ''; ?>"><i class="bi bi-envelope-open"></i> Notices</a>
-                    <a href="#" class="menu-link <?php echo ($currentPage == 'settings') ? 'active' : ''; ?>"><i class="bi bi-gear"></i> Settings</a>
+                    <a href="dashboard.php" class="menu-link <?php echo ($currentPage == 'dashboard') ? 'active' : ''; ?>"><i class=" bi bi-layout-text-sidebar me-2"></i> Dashboard</a>
+
+                    <a href="add.php" class="menu-link <?php echo ($currentPage == 'add') ? 'active' : ''; ?>"><i class="bi bi-envelope-open me-2"></i> Notices</a>
+
+                    <a href="complaints.php" class="menu-link <?php echo ($currentPage == 'complaints') ? 'active' : ''; ?>">
+                        <i class="bi bi-exclamation-octagon me-2"></i> Complaints
+                    </a>
+
+                    <a href="approval.php" class="menu-link <?php echo ($currentPage == 'approval') ? 'active' : ''; ?>"><i class="bi bi-person-check me-2"></i> User Verification</a>
+
+                    <a href="settings.php" class="menu-link <?php echo ($currentPage == 'settings') ? 'active' : ''; ?>"><i class="bi bi-gear me-2"></i> Settings</a>
                 </nav>
                 <div class="d-flex align-items-center p-3 mt-auto rounded-3 bg-light">
                     <div class="flex-grow-1">

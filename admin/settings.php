@@ -1,3 +1,13 @@
+<?php
+session_start();
+include '../db/connection.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header("Location: ../auth/login.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,8 +18,7 @@
     <link rel="icon" type="image/x-icon" href="../noti.ico" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-    <link rel="stylesheet" href="./assets/admin.css">
-    <link rel="stylesheet" href="./assets/style.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
 
 </head>
 
@@ -29,38 +38,10 @@
                         <!-- Left Menu -->
                         <div class="col-lg-4">
                             <div class="list-group mb-4 shadow-sm" id="settings-tabs">
-                                <button type="button" class="list-group-item list-group-item-action d-flex align-items-center active" data-target="notice-tab">
-                                    <i class="bi bi-file-text me-2"></i> Notice
-                                </button>
-                                <button type="button" class="list-group-item list-group-item-action d-flex align-items-center" data-target="holiday-tab">
-                                    <i class="bi bi-calendar2-event me-2"></i> Holiday
-                                </button>
-                                <button type="button" class="list-group-item list-group-item-action d-flex align-items-center" data-target="exam-tab">
-                                    <i class="bi bi-clipboard-check me-2"></i> Exam
-                                </button>
-                                <button type="button" class="list-group-item list-group-item-action d-flex align-items-center" data-target="online-class-tab">
-                                    <i class="bi bi-laptop me-2"></i> Online class
-                                </button>
                                 <button type="button" class="list-group-item list-group-item-action d-flex align-items-center text-danger" id="logout-btn">
                                     <i class="bi bi-box-arrow-right me-2"></i> Log Out
                                 </button>
                             </div>
-                        </div>
-                        <!-- Tab Content -->
-                        <div class="col-lg-8">
-
-                            <?php
-                            require 'profile.php'
-                            ?>
-
-                            <?php
-                            require 'notification.php'
-                            ?>
-
-                            <?php
-                            require 'password.php'
-                            ?>
-
                         </div>
                     </div>
                 </div>
@@ -86,17 +67,6 @@
 
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
                 <script>
-                    // Tabs toggle logic
-                    document.querySelectorAll('#settings-tabs button').forEach(tab => {
-                        tab.addEventListener('click', function() {
-                            document.querySelectorAll('#settings-tabs .list-group-item').forEach(item => item.classList.remove('active'));
-                            this.classList.add('active');
-                            const target = this.getAttribute('data-target');
-                            document.querySelectorAll('.settings-section').forEach(sec => sec.style.display = 'none');
-                            document.getElementById(target).style.display = 'block';
-                        });
-                    });
-
                     // Logout modal show
                     document.getElementById('logout-btn').addEventListener('click', function() {
                         new bootstrap.Modal(document.getElementById('logoutModal')).show();
@@ -105,6 +75,7 @@
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

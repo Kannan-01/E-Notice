@@ -122,9 +122,10 @@
 <?php
 include '../db/connection.php';
 
-function renderToast($message, $bgClass = 'bg-danger') {
-    // Outputs Bootstrap toast HTML and JS to show it on page load
-    echo '
+function renderToast($message, $bgClass = 'bg-danger')
+{
+  // Outputs Bootstrap toast HTML and JS to show it on page load
+  echo '
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
       <div id="liveToast" class="toast ' . $bgClass . ' text-white" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
         <div class="d-flex">
@@ -149,17 +150,19 @@ if (isset($_POST["submit"])) {
     die("Connection failed: " . mysqli_connect_error());
   }
 
-  // Create tables if not exist (same as before)
+  // Create tables if not exist
   $table_users = "CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role ENUM('student','teacher','admin') DEFAULT 'student',
-    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    avatar VARCHAR(255) DEFAULT NULL,
+    role ENUM('student','teacher','admin') NOT NULL DEFAULT 'student',
+    status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+    email_notify TINYINT(1) NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-  )";
+)";
 
   $table_students = "CREATE TABLE IF NOT EXISTS students (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -168,7 +171,7 @@ if (isset($_POST["submit"])) {
     contact VARCHAR(15),
     department VARCHAR(100),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-  )";
+)";
 
   $table_teachers = "CREATE TABLE IF NOT EXISTS teachers (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -177,7 +180,8 @@ if (isset($_POST["submit"])) {
     contact VARCHAR(15),
     department VARCHAR(100),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-  )";
+)";
+
 
   mysqli_query($conn, $table_users);
   mysqli_query($conn, $table_students);
@@ -197,45 +201,45 @@ if (isset($_POST["submit"])) {
   $check_email_result = mysqli_query($conn, $check_email_sql);
 
   if (mysqli_num_rows($check_email_result) > 0) {
-      renderToast('This email is already registered. Please use a different email.', 'bg-danger');
+    renderToast('This email is already registered. Please use a different email.', 'bg-danger');
   } else {
-      $duplicate = false;
+    $duplicate = false;
 
-      // Check student or employee ID duplicate
-      if ($role === 'student') {
-          $student_id = $_POST['student_id'];
-          $check_studentid_sql = "SELECT id FROM students WHERE student_id = '$student_id'";
-          $check_studentid_result = mysqli_query($conn, $check_studentid_sql);
-          if (mysqli_num_rows($check_studentid_result) > 0) {
-              renderToast('This student ID is already registered. Please Login.', 'bg-danger');
-              $duplicate = true;
-          }
-      } elseif ($role === 'teacher') {
-          $employee_id = $_POST['employee_id'];
-          $check_employeeid_sql = "SELECT id FROM teachers WHERE employee_id = '$employee_id'";
-          $check_employeeid_result = mysqli_query($conn, $check_employeeid_sql);
-          if (mysqli_num_rows($check_employeeid_result) > 0) {
-              renderToast('This employee ID is already registered. Please Login.', 'bg-danger');
-              $duplicate = true;
-          }
+    // Check student or employee ID duplicate
+    if ($role === 'student') {
+      $student_id = $_POST['student_id'];
+      $check_studentid_sql = "SELECT id FROM students WHERE student_id = '$student_id'";
+      $check_studentid_result = mysqli_query($conn, $check_studentid_sql);
+      if (mysqli_num_rows($check_studentid_result) > 0) {
+        renderToast('This student ID is already registered. Please Login.', 'bg-danger');
+        $duplicate = true;
       }
+    } elseif ($role === 'teacher') {
+      $employee_id = $_POST['employee_id'];
+      $check_employeeid_sql = "SELECT id FROM teachers WHERE employee_id = '$employee_id'";
+      $check_employeeid_result = mysqli_query($conn, $check_employeeid_sql);
+      if (mysqli_num_rows($check_employeeid_result) > 0) {
+        renderToast('This employee ID is already registered. Please Login.', 'bg-danger');
+        $duplicate = true;
+      }
+    }
 
-      if (!$duplicate) {
-          // Insert user
-          $sql_user = "INSERT INTO users (name, email, password, role) VALUES ('$name', '$email', '$hashedPassword', '$role')";
-          if (mysqli_query($conn, $sql_user)) {
-              $user_id = mysqli_insert_id($conn);
+    if (!$duplicate) {
+      // Insert user
+      $sql_user = "INSERT INTO users (name, email, password, role) VALUES ('$name', '$email', '$hashedPassword', '$role')";
+      if (mysqli_query($conn, $sql_user)) {
+        $user_id = mysqli_insert_id($conn);
 
-              if ($role === 'student') {
-                  $sql_student = "INSERT INTO students (user_id, student_id, contact, department) VALUES ($user_id, '$student_id', '$contact', '$department')";
-                  mysqli_query($conn, $sql_student);
-              } elseif ($role === 'teacher') {
-                  $sql_teacher = "INSERT INTO teachers (user_id, employee_id, contact, department) VALUES ($user_id, '$employee_id', '$contact', '$department')";
-                  mysqli_query($conn, $sql_teacher);
-              }
+        if ($role === 'student') {
+          $sql_student = "INSERT INTO students (user_id, student_id, contact, department) VALUES ($user_id, '$student_id', '$contact', '$department')";
+          mysqli_query($conn, $sql_student);
+        } elseif ($role === 'teacher') {
+          $sql_teacher = "INSERT INTO teachers (user_id, employee_id, contact, department) VALUES ($user_id, '$employee_id', '$contact', '$department')";
+          mysqli_query($conn, $sql_teacher);
+        }
 
-              // Show success toast and redirect after short delay
-              echo '
+        // Show success toast and redirect after short delay
+        echo '
               <div class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
                 <div id="successToast" class="toast bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
                   <div class="d-flex">
@@ -256,11 +260,11 @@ if (isset($_POST["submit"])) {
                   });
                 });
               </script>';
-              $_POST = array();
-          } else {
-              renderToast('Error: '.mysqli_error($conn), 'bg-danger');
-          }
+        $_POST = array();
+      } else {
+        renderToast('Error: ' . mysqli_error($conn), 'bg-danger');
       }
+    }
   }
   mysqli_close($conn);
 }

@@ -51,8 +51,9 @@
 </html>
 
 
-
 <?php
+session_start(); // Always start session at the top
+
 include '../db/connection.php';
 
 function renderToast($message, $bgClass = 'bg-danger') {
@@ -90,12 +91,13 @@ if (isset($_POST["login"])) {
         if ($user["status"] !== "approved") {
             renderToast('Your account is not approved by admin yet.', 'bg-warning text-dark');
         } else if (password_verify($password, $user["password"])) {
-            session_start();
+
+            // Store user session
             $_SESSION["user_id"] = $user["id"];
             $_SESSION["user_name"] = $user["name"];
             $_SESSION["role"] = $user["role"];
 
-            // Use a small script toast for success, then redirect after delay
+            // Success toast + redirect
             echo '
             <div class="position-fixed top-0 end-0 p-3" style="z-index: 1100;">
               <div id="successToast" class="toast bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
@@ -120,8 +122,7 @@ if (isset($_POST["login"])) {
                 echo 'window.location.href = "../user/notice.php";';
             }
 
-            echo ';
-                });
+            echo '});
               });
             </script>';
             exit();
@@ -135,5 +136,3 @@ if (isset($_POST["login"])) {
     mysqli_close($conn);
 }
 ?>
-
-

@@ -5,8 +5,11 @@
                 </div>
                 <nav>
                     <a href="notice.php" class="menu-link <?php echo ($currentPage == 'notice') ? 'active' : ''; ?>"><i class="bi bi-envelope-open"></i> Notices</a>
+                    <a href="holiday.php" class="menu-link <?php echo ($currentPage == 'holiday') ? 'active' : ''; ?>">
+                        <i class="bi bi-calendar-event"></i> Holidays
+                    </a>
                     <a href="exam.php" class="menu-link <?php echo ($currentPage == 'exam') ? 'active' : ''; ?>"> <i class="bi bi-journal-text"></i> Exams </a>
-                    <a href="feedback.php" class="menu-link <?php echo ($currentPage == 'feedback') ? 'active' : ''; ?>"><i class="bi bi-chat-dots"></i> Feedback</a>
+                    <a href="complaints.php" class="menu-link <?php echo ($currentPage == 'feedback') ? 'active' : ''; ?>"><i class="bi bi-chat-dots"></i> Complaints </a>
                     <a href="settings.php" class="menu-link <?php echo ($currentPage == 'settings') ? 'active' : ''; ?>"><i class="bi bi-gear"></i> Settings</a>
                 </nav>
                 <div class="d-flex align-items-center p-3 mt-auto rounded-3 bg-light">

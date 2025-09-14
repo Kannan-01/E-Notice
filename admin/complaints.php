@@ -1,97 +1,113 @@
-<!doctype html>
+<?php
+session_start();
+include '../db/connection.php';
+
+// Check if user is logged in and is admin
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header("Location: ../auth/login.php");
+    exit();
+}
+
+// Handle status update POST request
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complaint_id'], $_POST['status'])) {
+    $complaint_id = (int)$_POST['complaint_id'];
+    $status = $_POST['status'];
+
+    $allowed_status = ['Pending', 'In Progress', 'Resolved', 'Rejected'];
+    if (in_array($status, $allowed_status)) {
+        $stmt = $conn->prepare("UPDATE complaints SET status = ? WHERE id = ?");
+        $stmt->bind_param("si", $status, $complaint_id);
+        $stmt->execute();
+        $stmt->close();
+    }
+    // Redirect to avoid resubmission
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+
+// Fetch complaints
+$sql = "SELECT c.*, u.name AS user_name FROM complaints c
+        JOIN users u ON c.user_id = u.id
+        ORDER BY c.created_at DESC";
+$complaintsResult = $conn->query($sql);
+?>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>dashboard</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" type="image/x-icon" href="../noti.ico" />
-
-    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
-
-    <!-- Bootstrap -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Complaints Management - E-Notice</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-    <!-- Font Awesome -->
-    <script src="https://kit.fontawesome.com/e7761c5b02.js" crossorigin="anonymous"></script>
-
-    <!-- css -->
-    <link rel="stylesheet" href="../assets/css/admin.css">
-    <link rel="stylesheet" href="../assets/css/style.css" />
-
-    <style>
-        .card {
-            margin-bottom: 20px;
-            border-left: 5px solid #6c757d;
-
-        }
-
-        .badge-complaint {
-            background-color: #dc3545;
-        }
-
-        .badge-suggestion {
-            background-color: #0d6efd;
-        }
-    </style>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./assets/css/style.css" />
 </head>
-
 <body>
-
-    <div class="wrapper d-flex align-items-stretch">
-        <!-- sidebar -->
-
-        <!-- sidebar -->
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
         <?php
         $currentPage = 'complaints';
-        require './common/sidebar.php' ?>
-
-        <!-- Page Content -->
-        <div id="content" class="p-4 p-md-5">
-            <?php require './common/header.php' ?>
-
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb bg-light">
-                    <li class="breadcrumb-item fs-3 fw-bold"><a href="dashboard.php">Home</a></li>
-                    <li class="breadcrumb-item fs-3 fw-bold active" aria-current="page">Library</li>
-                </ol>
-            </nav>
-
-
-
-            <!-- Dummy Complaint Card -->
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Classroom Projector Not Working</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Submitted by: John Doe | Dept: Computer Science | Date: 2025-07-19</h6>
-                    <p class="card-text">The projector in CS Lab 2 hasn't been working for the past week. Kindly look into it.</p>
-                    <span class="badge badge-complaint text-white">Complaint</span>
-                </div>
+        require './common/sidebar.php';
+        ?>
+        <!-- Main Panel -->
+        <div class="col-lg-9 py-5 px-4">
+            <div class="container my-4">
+                <h3 class="mb-4 fw-bold">Complaints</h3>
+                <?php if ($complaintsResult && $complaintsResult->num_rows > 0): ?>
+                    <?php while ($complaint = $complaintsResult->fetch_assoc()): ?>
+                        <div class="card shadow-sm border-0 rounded-4 mb-4" style="box-shadow: 0 8px 16px rgba(0,0,0,0.1);">
+                            <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title fw-semibold mb-1"><?= htmlspecialchars($complaint['title']); ?></h5>
+                                    <h6 class="card-subtitle text-muted mb-2" style="font-size: 0.9rem;">
+                                        Submitted by: <?= htmlspecialchars($complaint['user_name']); ?> | Dept: <?= htmlspecialchars($complaint['department']); ?> | <small><?= date('Y-m-d', strtotime($complaint['created_at'])); ?></small>
+                                    </h6>
+                                    <p class="card-text text-secondary mb-0" style="line-height: 1.5;">
+                                        <?= nl2br(htmlspecialchars($complaint['description'])); ?>
+                                    </p>
+                                </div>
+                                <div class="d-flex flex-column align-items-center gap-1">
+                                    <div class="d-flex gap-1">
+                                        <form method="POST" class="m-0 p-0" style="display:inline-block;">
+                                            <input type="hidden" name="complaint_id" value="<?= $complaint['id']; ?>" />
+                                            <input type="hidden" name="status" value="Resolved" />
+                                            <button type="submit" class="btn bg-transparent p-1" title="Mark as Resolved">
+                                                <i class="bi bi-check2-circle text-success fs-5"></i>
+                                            </button>
+                                        </form>
+                                        <form method="POST" class="m-0 p-0" style="display:inline-block;">
+                                            <input type="hidden" name="complaint_id" value="<?= $complaint['id']; ?>" />
+                                            <input type="hidden" name="status" value="In Progress" />
+                                            <button type="submit" class="btn bg-transparent p-1" title="Mark In Progress">
+                                                <i class="bi bi-hourglass-split text-warning fs-5"></i>
+                                            </button>
+                                        </form>
+                                        <form method="POST" class="m-0 p-0" style="display:inline-block;">
+                                            <input type="hidden" name="complaint_id" value="<?= $complaint['id']; ?>" />
+                                            <input type="hidden" name="status" value="Rejected" />
+                                            <button type="submit" class="btn bg-transparent p-1" title="Reject Complaint">
+                                                <i class="bi bi-x-circle text-danger fs-5"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted fw-semibold">Status: 
+                                            <span class="text-primary">
+                                                <?= htmlspecialchars($complaint['status']); ?>
+                                            </span>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <p>No complaints found.</p>
+                <?php endif; ?>
             </div>
-
-            <!-- Dummy Suggestion Card -->
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Add More Charging Points in Library</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Submitted by: Meera S | Dept: Commerce | Date: 2025-07-18</h6>
-                    <p class="card-text">It would be helpful if we had more charging outlets in the library for laptops and phones.</p>
-                    <span class="badge badge-suggestion text-white">Suggestion</span>
-                </div>
-            </div>
-
-            <!-- Add more entries as needed -->
-
         </div>
-
     </div>
-
-    <script src="../assets/js/jquery.min.js"></script>
-    <script src="../assets/js/popper.js"></script>
-    <script src="../assets/js/bootstrap.min.js"></script>
-    <script src="../assets/js/main.js"></script>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-
 </html>

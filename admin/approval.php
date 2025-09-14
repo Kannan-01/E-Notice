@@ -1,5 +1,14 @@
 <?php
 
+session_start();
+include '../db/connection.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header("Location: ../auth/login.php");
+    exit();
+}
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -7,7 +16,6 @@ require '../PHPMailer/src/Exception.php';
 require '../PHPMailer/src/PHPMailer.php';
 require '../PHPMailer/src/SMTP.php';
 
-include '../db/connection.php';
 
 function sendApprovalEmail($toEmail, $toName)
 {
@@ -133,7 +141,7 @@ $conn->close();
     <title>Admin Approvals E-Notice</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-    <link rel="stylesheet" href="./assets/admin.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 
 <body>
@@ -141,7 +149,7 @@ $conn->close();
         <div class="row">
             <!-- Sidebar -->
             <?php
-            $currentPage='approval';
+            $currentPage = 'approval';
             require './common/sidebar.php'
             ?>
             <!-- Main Panel -->
@@ -152,7 +160,7 @@ $conn->close();
                         <!-- <button class="btn btn-outline-dark shadow-none"><i class="bi bi-search"></i></button> -->
                     </div>
                 </div>
-                <div class="table-responsive bg-white shadow rounded-3">
+                <div class="table-responsive bg-white shadow rounded-3 p-4">
                     <table class="table align-middle mb-0">
                         <thead>
                             <tr>

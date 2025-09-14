@@ -1,5 +1,19 @@
 <?php
+session_start();
 include '../db/connection.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header("Location: ../auth/login.php");
+    exit();
+}
+
+// Check if user is admin
+if (!isset($_SESSION['role']) || strtolower($_SESSION['role']) !== 'admin') {
+    // Redirect non-admins to user dashboard (or logout)
+    header("Location: ../user/dashboard.php");
+    exit();
+}
 
 // Total users excluding admins
 $sqlTotalUsers = "SELECT COUNT(*) as total FROM users WHERE role != 'admin'";
@@ -16,7 +30,7 @@ $sqlNotices = "SELECT COUNT(*) as total_notices FROM notices";
 $result = $conn->query($sqlNotices);
 $totalNotices = $result->fetch_assoc()['total_notices'] ?? 0;
 
-// Recent user approval/rejection activities (last 5)
+// Recent user activities
 $sqlActivities = "SELECT name, status, updated_at FROM users 
                   WHERE status IN ('approved', 'rejected') AND role != 'admin' 
                   ORDER BY updated_at DESC 
@@ -31,6 +45,7 @@ if ($result) {
 
 $conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -40,7 +55,7 @@ $conn->close();
     <title>Admin Approvals E-Notice</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-    <link rel="stylesheet" href="./assets/admin.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 
 <body>
@@ -48,7 +63,7 @@ $conn->close();
         <div class="row">
             <!-- Sidebar -->
             <?php
-            $currentPage='dashboard';
+            $currentPage = 'dashboard';
             require './common/sidebar.php'
             ?>
             <!-- Main Panel -->
@@ -61,21 +76,21 @@ $conn->close();
 
                     <div class="row g-4 mb-5">
                         <div class="col-md-4">
-                            <div class="card shadow-sm border-0 rounded-4 p-4">
+                            <div class="card dashCard shadow-sm border-0 rounded-4 p-4">
                                 <h5 class="text-muted">Total Users</h5>
                                 <h2 class="accent fw-bold"><?= $totalUsers ?></h2>
                                 <p class="text-success">+12% since last month</p>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="card shadow-sm border-0 rounded-4 p-4">
+                            <div class="card dashCard shadow-sm border-0 rounded-4 p-4">
                                 <h5 class="text-muted">Pending Approvals</h5>
                                 <h2 class="accent fw-bold"><?= $pendingApprovals ?></h2>
                                 <p class="text-warning">Needs your attention</p>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="card shadow-sm border-0 rounded-4 p-4">
+                            <div class="card dashCard shadow-sm border-0 rounded-4 p-4">
                                 <h5 class="text-muted">Notices Published</h5>
                                 <h2 class="accent fw-bold"><?= $totalNotices ?></h2>
                                 <p class="text-success">+5 new this week</p>

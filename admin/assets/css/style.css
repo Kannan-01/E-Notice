@@ -1,55 +1,6 @@
+/* Base */
 body {
-  background: #f6f7fb;
-}
-
-/* Avatars */
-.avatars-group {
-  display: flex;
-}
-
-.avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #fff;
-  margin-left: -9px;
-  box-shadow: 0 1px 3px rgba(140, 140, 140, 0.1);
-}
-
-.avatar:first-child {
-  margin-left: 0;
-}
-
-/* Forms and controls */
-.bg-white {
-  background: #fff;
-}
-
-.form-control,
-.form-select {
-  border-radius: 8px !important;
-  border: 2px solid #eee !important;
-  font-size: 1rem !important;
-  transition: border-color 0.2s;
-}
-
-.form-control:focus,
-.form-select:focus {
-  border-color: #f8b739 !important;
-  box-shadow: 0 0 8px rgba(247, 183, 0, 0.16) !important;
-  outline: none !important;
-}
-
-.list-group-item-action.active {
-  background-color: #fffbe0 !important;
-  color: #f8b739 !important;
-  border-color: #f8b739 !important;
-}
-
-.list-group-item-action i {
-  font-size: 1.2rem;
-  vertical-align: middle;
+  background: #f7f8fa;
 }
 
 /* Sidebar */
@@ -83,14 +34,6 @@ body {
   color: #f7b700;
 }
 
-.project-accent {
-  width: 6px;
-  height: 32px;
-  border-radius: 8px;
-  display: inline-block;
-  flex-shrink: 0;
-}
-
 .accent {
   color: #f7b700;
 }
@@ -108,7 +51,7 @@ body {
   margin-right: 12px;
 }
 
-/* Status badges */
+/* Status Badges */
 .status-badge {
   font-weight: 600;
   border-radius: 12px;
@@ -136,10 +79,10 @@ body {
 
 /* Buttons */
 .btn-approve {
-  background: #f7b700;
-  color: #fff !important;
+  background: #f8b739;
+  color: #222 !important;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 99px;
   border: none;
   padding: 0.4em 1em;
   margin-right: 6px;
@@ -149,7 +92,7 @@ body {
 
 .btn-approve:hover,
 .btn-approve:focus {
-  background: #cfa205;
+  background: #cfa205 !important;
   color: #fff !important;
 }
 
@@ -167,13 +110,98 @@ body {
   color: #fff;
 }
 
+/* Project Cards */
+.project-card {
+  min-height: 190px;
+  border: none;
+  position: relative;
+  box-shadow: 0 1px 8px rgba(64, 64, 64, 0.04);
+  transition: box-shadow 0.2s, transform 0.18s;
+  cursor: pointer;
+}
+
+.project-card:hover {
+  box-shadow: 0 8px 28px rgba(120, 120, 120, 0.14);
+  transform: translateY(-4px) scale(1.025);
+}
+
+.project-accent {
+  width: 6px;
+  height: 32px;
+  border-radius: 8px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Avatars */
+.avatars-group {
+  display: flex;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  margin-left: -9px;
+  box-shadow: 0 1px 3px rgba(140, 140, 140, 0.1);
+}
+
+.avatar:first-child {
+  margin-left: 0;
+}
+
+/* Forms */
+.bg-white {
+  background: #fff;
+}
+
+.form-control,
+.form-select {
+  border-radius: 8px !important;
+  border: 2px solid #eee !important;
+  font-size: 1rem !important;
+  transition: border-color 0.2s;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #f8b739 !important;
+  box-shadow: 0 0 8px rgba(247, 183, 0, 0.16) !important;
+  outline: none !important;
+}
+
+.list-group-item-action.active {
+  background-color: #fffbe0 !important;
+  color: #f8b739 !important;
+  border-color: #f8b739 !important;
+}
+
+.list-group-item-action i {
+  font-size: 1.2rem;
+  vertical-align: middle;
+}
+
 /* Tables */
 .table-responsive {
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
 
-/* Media queries */
+/* Cards */
+.dashCard {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  will-change: transform;
+}
+
+.dashCard:hover {
+  transform: scale(1.05);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+}
+
+/* Media Queries */
 @media (max-width: 991px) {
   .sidebar {
     position: relative;
@@ -188,14 +216,3 @@ body {
   }
 }
 
-/* Cards */
-.card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  will-change: transform;
-}
-
-.card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.12);
-  z-index: 10;
-}

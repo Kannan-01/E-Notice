@@ -7,16 +7,10 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
+$user_id   = $_SESSION['user_id'];
+$userRole  = $_SESSION['role']; // role already stored in session
 
-// Fetch user role
-$userRoleResult = mysqli_query($conn, "SELECT role FROM users WHERE id = $user_id LIMIT 1");
-if (!$userRoleResult || mysqli_num_rows($userRoleResult) == 0) {
-    die("User role not found.");
-}
-$userRole = mysqli_fetch_assoc($userRoleResult)['role'];
-
-// Get user department from relevant table
+// Get user department
 $userDept = null;
 if ($userRole === 'student') {
     $result = mysqli_query($conn, "SELECT department FROM students WHERE user_id = $user_id LIMIT 1");
@@ -30,22 +24,31 @@ if ($userRole === 'student') {
     }
 }
 
-// If no department found, handle accordingly
 if (!$userDept) {
-    $userDept = ''; // or null or 'All'
+    $userDept = '';
 }
 
-// Update expired notices (optional)
+// Update expired holidays
 $today = date('Y-m-d');
-mysqli_query($conn, "UPDATE notices SET status = 'inactive' WHERE valid_until < '$today' AND status = 'active'");
 
-// Fetch active notices for user department or general (department NULL or 'All')
-$noticesSql = "SELECT * FROM notices 
-               WHERE (department = '$userDept' OR department IS NULL OR department = 'All')
-                 AND status = 'active'
-               ORDER BY posted_at DESC";
+mysqli_query($conn, "
+    UPDATE holidays 
+    SET status = 'inactive' 
+    WHERE status = 'active'
+      AND (
+          (end_date IS NOT NULL AND end_date < '$today')
+          OR (holiday_date IS NOT NULL AND holiday_date < '$today')
+      )
+");
 
-$noticesResult = mysqli_query($conn, $noticesSql);
+// Fetch active holiday notices
+$holidaysSql = "
+    SELECT * FROM holidays 
+    WHERE (department = '$userDept' OR department = 'All' OR department IS NULL)
+      AND status = 'active'
+    ORDER BY posted_at DESC
+";
+$holidaysResult = mysqli_query($conn, $holidaysSql);
 ?>
 
 <!DOCTYPE html>
@@ -54,7 +57,7 @@ $noticesResult = mysqli_query($conn, $noticesSql);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>E-Notice</title>
+    <title>Holiday Notices</title>
     <link rel="icon" type="image/x-icon" href="../noti.ico" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
@@ -66,49 +69,56 @@ $noticesResult = mysqli_query($conn, $noticesSql);
         <div class="row">
             <!-- Sidebar -->
             <?php
-            $currentPage = 'notice';
-            require './common/sidebar.php'
+            $currentPage = 'holiday';
+            require './common/sidebar.php';
             ?>
             <!-- Main Panel -->
             <div class="col-lg-9 py-5 px-4">
-                <!-- Main Content: User Notice Board UI -->
-                <!-- Container & Header -->
                 <div class="container py-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="fw-bold">General Notices</h2>
+                        <h2 class="fw-bold">Holiday Notices</h2>
                         <div class="text-muted" style="font-size: 1rem;">
-                            Sort By <b>Recent Project <i class="bi bi-chevron-down"></i></b>
+                            Sort By <b>Recent <i class="bi bi-chevron-down"></i></b>
                         </div>
                     </div>
 
-                    <!-- Cards Grid -->
+                    <!-- Holiday Grid -->
                     <div class="row g-4">
                         <?php
-                        if ($noticesResult && mysqli_num_rows($noticesResult) > 0) {
-                            while ($notice = mysqli_fetch_assoc($noticesResult)) {
+                        if ($holidaysResult && mysqli_num_rows($holidaysResult) > 0) {
+                            while ($holiday = mysqli_fetch_assoc($holidaysResult)) {
                         ?>
-                                <!-- Notice Card -->
+                                <!-- Holiday Card -->
                                 <div class="col-sm-6 col-lg-4">
                                     <div class="project-card shadow-sm rounded-4 bg-white p-4 h-100 d-flex flex-column">
 
                                         <!-- Header -->
                                         <div class="d-flex align-items-start mb-3">
-                                            <span class="project-accent me-3"
-                                                style="background:#cd5ff8;"></span>
+                                            <span class="project-accent me-3" style="background:#ffaf49"></span>
                                             <h5 class="fw-semibold mb-0 flex-grow-1">
-                                                <?= htmlspecialchars($notice['title']) ?>
+                                                <?= htmlspecialchars($holiday['title']) ?>
                                             </h5>
                                         </div>
 
                                         <!-- Description -->
                                         <p class="text-dark small flex-grow-1 ps-3 mb-3">
-                                            <?= nl2br(htmlspecialchars($notice['description'])) ?>
+                                            <?= nl2br(htmlspecialchars($holiday['description'])) ?>
                                         </p>
+
+                                        <!-- Dates -->
+                                        <div class="d-flex align-items-center ps-3 text-muted small mb-2">
+                                            <i class="bi bi-calendar-event me-1"></i>
+                                            <?php if (!empty($holiday['start_date']) && !empty($holiday['end_date'])): ?>
+                                                <?= date('M d, Y', strtotime($holiday['start_date'])) ?> - <?= date('M d, Y', strtotime($holiday['end_date'])) ?>
+                                            <?php elseif (!empty($holiday['holiday_date'])): ?>
+                                                <?= date('M d, Y', strtotime($holiday['holiday_date'])) ?>
+                                            <?php endif; ?>
+                                        </div>
 
                                         <!-- Footer -->
                                         <div class="text-end mt-auto">
                                             <small class="fst-italic text-muted">
-                                                Posted on <?= date('M d, Y', strtotime($notice['posted_at'])) ?>
+                                                Posted on <?= date('M d, Y', strtotime($holiday['posted_at'])) ?>
                                             </small>
                                         </div>
                                     </div>
@@ -116,18 +126,16 @@ $noticesResult = mysqli_query($conn, $noticesSql);
                         <?php
                             }
                         } else {
-                            echo '<p>No active notices available for your department.</p>';
+                            echo '<p>No active holiday notices available for your department.</p>';
                         }
                         ?>
                     </div>
-
 
                 </div>
             </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 </body>
 
 </html>

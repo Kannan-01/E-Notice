@@ -14,7 +14,7 @@ function fetchUserData($conn, $user_id)
 {
     $userData = [];
 
-    $sqlUser = "SELECT id, name, email,avatar, role, status FROM users WHERE id = '$user_id'";
+    $sqlUser = "SELECT id, name, email, avatar, role, status FROM users WHERE id = '$user_id'";
     $resultUser = mysqli_query($conn, $sqlUser);
 
     if ($resultUser && mysqli_num_rows($resultUser) > 0) {
@@ -57,7 +57,51 @@ function fetchUserData($conn, $user_id)
     return $userData;
 }
 
-// Handle profile update
+// Fetch fresh user data
+$data = fetchUserData($conn, $user_id);
+$user = $data['user'];
+$specific_id = $data['specific_id'];
+$contact = $data['contact'];
+$department = $data['department'];
+
+/* ======================
+   Handle Avatar Upload/Delete
+   ====================== */
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['avatar'])) {
+    if ($_FILES['avatar']['error'] === 0) {
+        $imageName = basename($_FILES['avatar']['name']);
+        $avatarPath = "uploads/" . time() . "_" . $imageName;
+        $targetFile = "../" . $avatarPath;
+
+        $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+
+        if (in_array($fileType, $allowedTypes)) {
+            if (move_uploaded_file($_FILES['avatar']['tmp_name'], $targetFile)) {
+                // delete old avatar if exists
+                $oldAvatar = $user['avatar'];
+                if (!empty($oldAvatar) && file_exists("../" . $oldAvatar)) {
+                    unlink("../" . $oldAvatar);
+                }
+
+                mysqli_query($conn, "UPDATE users SET avatar='$avatarPath' WHERE id='$user_id'");
+                $user['avatar'] = $avatarPath;
+            }
+        }
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_avatar'])) {
+    if (!empty($user['avatar']) && file_exists("../" . $user['avatar'])) {
+        unlink("../" . $user['avatar']);
+    }
+    mysqli_query($conn, "UPDATE users SET avatar=NULL WHERE id='$user_id'");
+    $user['avatar'] = null;
+}
+
+/* ======================
+   Handle Profile Info Update
+   ====================== */
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_profile'])) {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
@@ -80,6 +124,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_profile'])) {
             }
 
             if ($updatedSpecific) {
+                // 🔄 Re-fetch fresh updated user data
+                $data = fetchUserData($conn, $user_id);
+                $user = $data['user'];
+                $specific_id = $data['specific_id'];
+                $contact = $data['contact'];
+                $department = $data['department'];
+
                 echo "<script>
                     document.addEventListener('DOMContentLoaded', function() {
                         var toastElement = document.getElementById('liveToast');
@@ -89,89 +140,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_profile'])) {
                         }
                     });
                 </script>";
-            } else {
-                $errorMsg = mysqli_error($conn);
-                echo "<script>alert('Failed to update profile: " . addslashes($errorMsg) . "');</script>";
             }
-        } else {
-            $errorMsg = mysqli_error($conn);
-            echo "<script>alert('Failed to update profile: " . addslashes($errorMsg) . "');</script>";
         }
-    } else {
-        echo '<script>alert("Name and email cannot be empty.");</script>';
     }
 }
 
-// Fetch fresh user data after update handling
-$data = fetchUserData($conn, $user_id);
-$user = $data['user'];
-$specific_id = $data['specific_id'];
-$contact = $data['contact'];
-$department = $data['department'];
 
-// Fetch current user email_notify status from DB before rendering the form
+/* ======================
+   Handle Notification Settings
+   ====================== */
 $sqlNotify = "SELECT email_notify FROM users WHERE id = '$user_id'";
 $resultNotify = mysqli_query($conn, $sqlNotify);
-$email_notify = 1; // default enabled
+$email_notify = 1; // default
 if ($resultNotify && mysqli_num_rows($resultNotify) > 0) {
     $row = mysqli_fetch_assoc($resultNotify);
     $email_notify = $row['email_notify'];
 }
 
-// On form submit for notification toggle (you can integrate this into your existing update handler)
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save_notifications'])) {
-    // Checkbox sends 'email_notify' only if checked
     $new_notify = isset($_POST['email_notify']) ? 1 : 0;
-
-    $sqlUpdateNotify = "UPDATE users SET email_notify = $new_notify WHERE id = '$user_id'";
-    if (mysqli_query($conn, $sqlUpdateNotify)) {
-        $email_notify = $new_notify;
-    } else {
-        echo '<script>alert("Failed to update notification setting.");</script>';
-    }
+    mysqli_query($conn, "UPDATE users SET email_notify = $new_notify WHERE id = '$user_id'");
+    $email_notify = $new_notify;
 }
 
-// password area
-
+/* ======================
+   Handle Password Change
+   ====================== */
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_password'])) {
     $currentPassword = $_POST['currentPassword'] ?? '';
     $newPassword = $_POST['newPassword'] ?? '';
     $confirmPassword = $_POST['confirmPassword'] ?? '';
 
-    if (empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
-        $passError = "All password fields are required.";
-    } elseif ($newPassword !== $confirmPassword) {
-        $passError = "New password and confirm password do not match.";
-    } else {
-        // Fetch current hashed password from DB
+    if (!empty($currentPassword) && !empty($newPassword) && $newPassword === $confirmPassword) {
         $sql = "SELECT password FROM users WHERE id = '$user_id'";
         $result = mysqli_query($conn, $sql);
         if ($result && mysqli_num_rows($result) == 1) {
             $row = mysqli_fetch_assoc($result);
-            $hashedPassword = $row['password'];
-
-            // Verify current password
-            if (password_verify($currentPassword, $hashedPassword)) {
-                // Hash new password
+            if (password_verify($currentPassword, $row['password'])) {
                 $newHashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-
-                // Update password in DB
-                $sqlUpdate = "UPDATE users SET password = '$newHashedPassword' WHERE id = '$user_id'";
-                if (mysqli_query($conn, $sqlUpdate)) {
-                    $passSuccess = "Password updated successfully.";
-                } else {
-                    $passError = "Error updating password: " . mysqli_error($conn);
-                }
+                mysqli_query($conn, "UPDATE users SET password='$newHashedPassword' WHERE id='$user_id'");
+                $passSuccess = "Password updated successfully.";
             } else {
                 $passError = "Current password is incorrect.";
             }
-        } else {
-            $passError = "User not found.";
         }
+    } else {
+        $passError = "Please fill correctly.";
     }
 }
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -183,7 +201,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_password'])) {
     <link rel="icon" type="image/x-icon" href="../noti.ico" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../admin/assets/admin.css">
     <link rel="stylesheet" href="./assets/css/style.css">
 
 </head>
