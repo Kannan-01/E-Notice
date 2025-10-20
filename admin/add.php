@@ -181,6 +181,90 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['announce_exam'])) {
         $toastIsError = true;
     }
 }
+
+/* ----------------- EVENTS ----------------- */
+// Create events table if not exists
+$createEventsTable = "
+CREATE TABLE IF NOT EXISTS events (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  event_title VARCHAR(255) NOT NULL,
+  event_description TEXT NOT NULL,
+  event_date DATE NOT NULL,
+  event_time TIME NOT NULL,
+  event_venue VARCHAR(255) NOT NULL,
+  event_organized_by VARCHAR(255) NOT NULL,
+  event_target ENUM('All','Students','Teachers') NOT NULL DEFAULT 'All',
+  event_department VARCHAR(100) NOT NULL,
+  event_poster VARCHAR(255) DEFAULT NULL,
+  status ENUM('active','inactive') NOT NULL DEFAULT 'active',
+  posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+";
+mysqli_query($conn, $createEventsTable);
+
+// Save event
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['announce_event'])) {
+    $title        = $_POST['event_title'] ?? '';
+    $description  = $_POST['event_description'] ?? '';
+    $date         = $_POST['event_date'] ?? '';
+    $time         = $_POST['event_time'] ?? '';
+    $venue        = $_POST['event_venue'] ?? '';
+    $organized_by = $_POST['event_organized_by'] ?? '';
+    $target       = $_POST['event_target'] ?? 'All';
+    $department   = $_POST['event_department'] ?? 'All';
+
+    $posterPath = NULL;
+
+    // Handle file upload
+    if (isset($_FILES['event_poster']) && $_FILES['event_poster']['error'] === 0) {
+        $imageName = basename($_FILES['event_poster']['name']);
+        $posterPath = "uploads/" . time() . "_" . $imageName;
+        $targetFile = "../" . $posterPath;
+
+        $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+
+        if (in_array($fileType, $allowedTypes)) {
+            if (!is_dir("../uploads")) {
+                mkdir("../uploads", 0777, true); // create folder if not exists
+            }
+            if (!move_uploaded_file($_FILES['event_poster']['tmp_name'], $targetFile)) {
+                $posterPath = NULL;
+                $toastMessage = "Failed to upload event poster.";
+                $toastIsError = true;
+            }
+        } else {
+            $posterPath = NULL;
+            $toastMessage = "Invalid file type. Allowed: JPG, PNG, GIF.";
+            $toastIsError = true;
+        }
+    }
+
+    // Insert into DB
+    $sql = "INSERT INTO events 
+            (event_title, event_description, event_date, event_time, event_venue, event_organized_by, event_target, event_department, event_poster, status) 
+            VALUES (
+                '$title',
+                '$description',
+                '$date',
+                '$time',
+                '$venue',
+                '$organized_by',
+                '$target',
+                '$department',
+                " . ($posterPath ? "'$posterPath'" : "NULL") . ",
+                'active'
+            )";
+
+    if (mysqli_query($conn, $sql)) {
+        $toastMessage = "Event announced successfully.";
+        $toastIsError = false;
+    } else {
+        $toastMessage = "Error announcing event: " . mysqli_error($conn);
+        $toastIsError = true;
+    }
+}
+
 ?>
 
 

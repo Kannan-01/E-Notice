@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 include '../db/connection.php';
 
@@ -16,7 +15,6 @@ require '../PHPMailer/src/Exception.php';
 require '../PHPMailer/src/PHPMailer.php';
 require '../PHPMailer/src/SMTP.php';
 
-
 function sendApprovalEmail($toEmail, $toName)
 {
     $mail = new PHPMailer(true);
@@ -24,16 +22,16 @@ function sendApprovalEmail($toEmail, $toName)
     try {
         // Server settings
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';            // Your SMTP server
+        $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'enoticekmm@gmail.com';  // Your email
-        $mail->Password = 'erhi bhlg qnkf lkbb';     // Your app password
+        $mail->Username = 'enoticekmm@gmail.com';  
+        $mail->Password = 'erhi bhlg qnkf lkbb';     
         $mail->SMTPSecure = 'tls';
         $mail->Port = 587;
 
         // Recipients
         $mail->setFrom('enoticekmm@gmail.com', 'E-Notice Board');
-        $mail->addAddress($toEmail, $toName);
+        $mail->addAddress($toEmail ?? '', $toName ?? '');
 
         // Content
         $mail->isHTML(true);
@@ -45,15 +43,17 @@ function sendApprovalEmail($toEmail, $toName)
                 <h1 style="margin:0; font-size:24px;">Account Approved 🎉</h1>
             </div>
             <div style="padding:30px; color:#333;">
-                <p>Dear <strong>' . htmlspecialchars($toName) . '</strong>,</p>
+                <p>Dear <strong>' . htmlspecialchars($toName ?? '') . '</strong>,</p>
                 <p style="font-size:16px; line-height:1.5;">
-                    We are pleased to inform you that your account on <strong>E-Notice Board</strong> has been successfully <span style="color:#31ce7b; font-weight:600;">approved</span> by the administrator.
+                    We are pleased to inform you that your account on <strong>E-Notice Board</strong> has been successfully 
+                    <span style="color:#31ce7b; font-weight:600;">approved</span> by the administrator.
                 </p>
                 <p style="font-size:16px; line-height:1.5;">
                     You can now log in and enjoy full access to all features and notifications relevant to your profile.
                 </p>
                 <div style="text-align:center; margin: 30px 0;">
-                    <a href="http://localhost/e-notice/auth/login.php" style="background:#f8b739; color:#fff; padding:12px 25px; text-decoration:none; font-size:16px; font-weight:bold; border-radius:5px; display:inline-block;">
+                    <a href="http://localhost/e-notice/auth/login.php" 
+                        style="background:#f8b739; color:#fff; padding:12px 25px; text-decoration:none; font-size:16px; font-weight:bold; border-radius:5px; display:inline-block;">
                         Login to Your Account
                     </a>
                 </div>
@@ -91,7 +91,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['use
 
         // Send approval email ONLY on approval
         if ($new_status === 'approved') {
-            // Fetch user's name and email for mailing
             $stmt2 = $conn->prepare("SELECT name, email FROM users WHERE id = ?");
             $stmt2->bind_param('i', $user_id);
             $stmt2->execute();
@@ -102,12 +101,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['use
             sendApprovalEmail($userEmail, $userName);
         }
     }
-    // Redirect to avoid form resubmission on refresh
     header("Location: " . $_SERVER['PHP_SELF']);
     exit();
 }
 
-// Fetch users with all three statuses: pending, approved, rejected (excluding admins)
+// Fetch users with statuses
 $sql = "SELECT u.id, u.name, u.email, u.role, u.status, 
         s.student_id, t.employee_id,
         COALESCE(s.department, t.department) as department
@@ -120,7 +118,7 @@ $sql = "SELECT u.id, u.name, u.email, u.role, u.status,
 $result = $conn->query($sql);
 $users = $result->fetch_all(MYSQLI_ASSOC);
 
-// Add identifier key for display
+// Add identifier
 foreach ($users as &$user) {
     if ($user['role'] === 'student') {
         $user['identifier'] = $user['student_id'];
@@ -134,7 +132,6 @@ $conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -144,7 +141,6 @@ $conn->close();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" href="./assets/css/style.css">
 </head>
-
 <body>
     <div class="container-fluid">
         <div class="row">
@@ -157,9 +153,6 @@ $conn->close();
             <div class="col-lg-9 py-5 px-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h3 class="fw-bold text-dark">User <span class="text-warning">Approvals</span></h3>
-                    <div>
-                        <!-- <button class="btn btn-outline-dark shadow-none"><i class="bi bi-search"></i></button> -->
-                    </div>
                 </div>
                 <div class="table-responsive bg-white shadow rounded-3 p-4">
                     <table class="table align-middle mb-0">
@@ -179,21 +172,23 @@ $conn->close();
                                     <td class="d-flex align-items-center">
                                         <span class="profile-icon"><i class="bi bi-person"></i></span>
                                         <span>
-                                            <span class="fw-bold"><?= htmlspecialchars($user['name']) ?></span>
+                                            <span class="fw-bold"><?= htmlspecialchars($user['name'] ?? '') ?></span>
                                             <div class="text-muted" style="font-size: 0.94em;">
                                                 <?= $user['role'] === 'student' ? 'Student ID: ' : 'Teacher ID: ' ?>
                                                 <?= htmlspecialchars($user['identifier'] ?? '') ?>
                                             </div>
                                         </span>
                                     </td>
-                                    <td><span class="accent"><?= ucfirst($user['role']) ?></span></td>
-                                    <td><?= htmlspecialchars($user['department']) ?></td>
-                                    <td><?= htmlspecialchars($user['email']) ?></td>
-                                    <td><span class="status-badge status-<?= htmlspecialchars($user['status']) ?>">
-                                            <?= ucfirst($user['status']) ?>
-                                        </span></td>
+                                    <td><span class="accent"><?= ucfirst($user['role'] ?? '') ?></span></td>
+                                    <td><?= htmlspecialchars($user['department'] ?? '') ?></td>
+                                    <td><?= htmlspecialchars($user['email'] ?? '') ?></td>
                                     <td>
-                                        <?php if ($user['status'] === 'pending'): ?>
+                                        <span class="status-badge status-<?= htmlspecialchars($user['status'] ?? '') ?>">
+                                            <?= ucfirst($user['status'] ?? '') ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?php if (($user['status'] ?? '') === 'pending'): ?>
                                             <form method="post" class="d-inline">
                                                 <input type="hidden" name="user_id" value="<?= $user['id'] ?>" />
                                                 <input type="hidden" name="action" value="approve" />
@@ -223,5 +218,4 @@ $conn->close();
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

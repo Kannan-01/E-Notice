@@ -1,10 +1,12 @@
             <!-- Sidebar -->
             <div class="col-lg-3 sidebar px-4 py-4">
                 <div class="brand-title mb-4">
-                    <span class="accent">E-Notice</span> User
+                    <span class="accent">E-Notice</span> <?= ucfirst(htmlspecialchars($_SESSION['role'] ?? 'User')) ?>
                 </div>
+
                 <nav>
                     <a href="notice.php" class="menu-link <?php echo ($currentPage == 'notice') ? 'active' : ''; ?>"><i class="bi bi-envelope-open me-2"></i> Notices</a>
+                    <a href="events.php" class="menu-link <?php echo ($currentPage == 'events') ? 'active' : ''; ?>"> <i class="bi bi-broadcast me-2"></i> Events </a>
                     <a href="holiday.php" class="menu-link <?php echo ($currentPage == 'holiday') ? 'active' : ''; ?>">
                         <i class="bi bi-calendar-event me-2"></i> Holidays
                     </a>

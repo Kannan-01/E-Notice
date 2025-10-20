@@ -44,8 +44,8 @@
         <div class="mb-3">
           <label for="target" class="form-label">Target Audience</label>
           <select class="form-select" id="target" name="target" required>
-            <option value="students">Students</option>
-            <option value="teachers">Teachers</option>
+            <option value="student">Students</option>
+            <option value="teacher">Teachers</option>
             <option value="all" selected>All</option>
           </select>
         </div>
