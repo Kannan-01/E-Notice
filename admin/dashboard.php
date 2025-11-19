@@ -37,7 +37,6 @@ if ($result) {
     }
 }
 
-$conn->close();
 ?>
 
 <!DOCTYPE html>

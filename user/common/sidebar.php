@@ -14,14 +14,25 @@
                     <a href="complaints.php" class="menu-link <?php echo ($currentPage == 'feedback') ? 'active' : ''; ?>"><i class="bi bi-chat-dots me-2"></i> Complaints </a>
                     <a href="settings.php" class="menu-link <?php echo ($currentPage == 'settings') ? 'active' : ''; ?>"><i class="bi bi-gear me-2"></i> Settings</a>
                 </nav>
+                <?php
+                $user_id = $_SESSION['user_id'];
+                $userResult = mysqli_query($conn, "SELECT avatar FROM users WHERE id = '$user_id' LIMIT 1");
+                $userData = mysqli_fetch_assoc($userResult);
+                $avatarPath = !empty($userData['avatar']) ? "../" . $userData['avatar'] : "https://cdn-icons-png.flaticon.com/512/847/847969.png"; // default placeholder
+                ?>
+
                 <div class="d-flex align-items-center p-3 mt-auto rounded-3 bg-light">
                     <div class="flex-grow-1">
                         <div class="small text-secondary">Signed in as</div>
                         <div class="fw-semibold"><?= htmlspecialchars($_SESSION['user_name'] ?? 'User Name') ?></div>
                     </div>
-                    <i class="bi bi-person-circle fs-4 text-secondary"></i>
+                    <img src="<?= htmlspecialchars($avatarPath) ?>"
+                        alt="Profile"
+                        class="rounded-circle ms-3"
+                        style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ddd;">
                 </div>
+
                 <div class="mt-5 pt-4 border-top">
-                    <span class="menu-link"><i class="bi bi-question-circle"></i> Help Center</span>
+                    <a href="reachout.php" class="menu-link <?php echo ($currentPage == 'reachout') ? 'active' : ''; ?>"><i class="bi bi-telephone"></i> Contact Us</a>
                 </div>
             </div>

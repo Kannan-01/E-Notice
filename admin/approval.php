@@ -127,8 +127,6 @@ foreach ($users as &$user) {
     }
 }
 unset($user);
-
-$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
